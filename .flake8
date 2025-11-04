@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 119
+exclude =
+    migrations,
+    __pycache__,
+    __init__.py,
+    manage.py,
+    settings.py,
+    .git,
+    .venv,
+    */migrations/*,
+    */static/*,
+    */media/*
+ignore = E203, W503

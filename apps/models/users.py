@@ -59,27 +59,16 @@ class Interpreter(User, CreatedBaseModel):
         ADVANCED = 'advanced', 'Advanced'
         NATIVE = 'native', 'Native'
 
-    gender = CharField(
-        max_length=6,
-        choices=GenderType.choices,  # type: ignore
-        verbose_name=_("Пол")
-    )
-    language = ManyToManyField('apps.Language')
-    language_level = CharField(
-        max_length=20,
-        choices=LangLevel.choices,  # type: ignore
-        default=LangLevel.BEGINNER
-    )
-    translation_type = ManyToManyField('apps.TranslationType')
+    gender = CharField(_("Пол"), max_length=6, choices=GenderType.choices)
+    language_level = CharField(max_length=20, choices=LangLevel.choices, default=LangLevel.BEGINNER)
     experience = TextField()
     is_ready_for_trips = BooleanField(default=False)
+    hourly_rate = DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+
+    translation_type = ManyToManyField('apps.TranslationType')
+    language = ManyToManyField('apps.Language')
     city = ForeignKey('apps.City', SET_NULL, null=True, related_name="translators")
     specializations = ManyToManyField('apps.Specialization', related_name='translators')
-    hourly_rate = DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        validators=[MinValueValidator(0)]
-    )
 
 
 class Client(User):
@@ -89,22 +78,9 @@ class Client(User):
         INDIVIDUAL = 'individual', _('Физическое лицо')
         LEGAL = 'legal', _('Юридическое лицо')
 
-    client_type = CharField(
-        max_length=20,
-        choices=ClientType.choices,
-        default=ClientType.INDIVIDUAL,
-        verbose_name='Тип клиента',
-        db_index=True  # Индекс для быстрой фильтрации
-    )
 
-    # Поля для юридического лица
-
-    company_name = CharField(
-        max_length=255,
-        blank=True,
-        verbose_name=_('Название компании')
-    )
-
+    client_type = CharField(_('Тип клиента'), max_length=20, choices=ClientType.choices, default=ClientType.INDIVIDUAL)
+    company_name = CharField(_('Название компании'), max_length=255, blank=True)
     tax_id = CharField(_('ИНН'), max_length=50, blank=True, unique=True, null=True)
     legal_address = TextField(_('Юридический адрес'), blank=True)
 
@@ -112,9 +88,8 @@ class Client(User):
     is_active = BooleanField(_('Активен'), default=False)
 
     class Meta:
-        db_table = 'clients'
-        verbose_name = 'Клиент'
-        verbose_name_plural = 'Клиенты'
+        verbose_name = _('Клиент')
+        verbose_name_plural = _('Клиенты')
         ordering = ['-created_at']
 
     def __str__(self):
