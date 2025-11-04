@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # My apps
-    'apps'
+    'apps',
 
     # Third-Party apps
     'drf_spectacular',
@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_ckeditor_5',
     'location_field.apps.DefaultConfig',
-    'video_encoding',
     'django_celery_results',
     # 'django_minio_backend',
     'django_extensions',

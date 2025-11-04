@@ -1,7 +1,7 @@
 from django.contrib.auth.models import (AbstractUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.validators import MinValueValidator
-from django.db.models import (BooleanField, CharField, DateField, EmailField,
+from django.db.models import (BooleanField, CharField, EmailField,
                               TextChoices, ManyToManyField, TextField, ForeignKey, SET_NULL, DecimalField)
 from django.utils.translation import gettext_lazy as _
 
@@ -40,7 +40,6 @@ class User(AbstractUser, PermissionsMixin, UUIDBaseModel):
     class Meta:
         verbose_name = _('пользователь')
         verbose_name_plural = _('пользователи')
-        unique_together = ('email',)
 
     def __str__(self):
         return self.email
@@ -65,7 +64,7 @@ class Interpreter(User, CreatedBaseModel):
     is_ready_for_trips = BooleanField(default=False)
     hourly_rate = DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
 
-    translation_type = ManyToManyField('apps.TranslationType')
+    # translation_type = ManyToManyField('apps.TranslationType')
     language = ManyToManyField('apps.Language')
     city = ForeignKey('apps.City', SET_NULL, null=True, related_name="translators")
     specializations = ManyToManyField('apps.Specialization', related_name='translators')
@@ -78,22 +77,21 @@ class Client(User):
         INDIVIDUAL = 'individual', _('Физическое лицо')
         LEGAL = 'legal', _('Юридическое лицо')
 
-
     client_type = CharField(_('Тип клиента'), max_length=20, choices=ClientType.choices, default=ClientType.INDIVIDUAL)
     company_name = CharField(_('Название компании'), max_length=255, blank=True)
     tax_id = CharField(_('ИНН'), max_length=50, blank=True, unique=True, null=True)
     legal_address = TextField(_('Юридический адрес'), blank=True)
 
-    # Метаданные
-    is_active = BooleanField(_('Активен'), default=False)
-
     class Meta:
         verbose_name = _('Клиент')
         verbose_name_plural = _('Клиенты')
-        ordering = ['-created_at']
+
+    @property
+    def is_individual(self):
+        return self.client_type == self.ClientType.INDIVIDUAL
 
     def __str__(self):
-        if self.client_type == self.ClientType.INDIVIDUAL:
+        if self.is_individual:
             return f"{self.first_name} {self.last_name}".strip() or self.email
         else:
             return self.company_name or self.email

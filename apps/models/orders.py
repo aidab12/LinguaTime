@@ -76,7 +76,7 @@ class Order(CreatedBaseModel):
     online_link = URLField('Ссылка на встречу', blank=True)
 
     # ===== ТИП ПЕРЕВОДА =====
-    translation_type = CharField(_('Тип перевода'), max_length=20, choices=TranslationType.choices, )
+    translation_type = CharField(_('Тип перевода'), max_length=20, choices=TranslationType.choices)
     interpreter_count = PositiveSmallIntegerField(_('Количество переводчиков'), default=1)
 
     # ===== ЯЗЫКИ (многие-ко-многим) =====
