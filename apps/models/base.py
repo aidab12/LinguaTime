@@ -32,8 +32,7 @@ class CreatedBaseModel(UUIDBaseModel):
 
     class Meta:
         abstract = True
-
-
+        ordering = ('-created_at',)
 
 
 class SlugBasedModel(UUIDBaseModel):
@@ -63,10 +62,7 @@ class SocialLinkBase(Model):
         PINTEREST = 'pinterest', 'Pinterest'
         X = 'x', 'X'
 
-    platform = CharField(
-        max_length=20,
-        choices=Platform.choices,
-    )
+    platform = CharField(max_length=20, choices=Platform.choices)
     url = URLField(max_length=255)
 
     class Meta:

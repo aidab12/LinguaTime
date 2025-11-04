@@ -1,11 +1,9 @@
-from time import timezone
-
-from django.db.models import(
-    ForeignKey, CASCADE, TextChoices,
-    DecimalField, CharField, DateTimeField)
+from django.db.models import ForeignKey, CASCADE, TextChoices, DecimalField, CharField, DateTimeField
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import CreatedBaseModel
-from django.utils.translation import gettext_lazy as _
+
 
 class Booking(CreatedBaseModel):
     """Модель для взаимодействия между заказом и переводчиком"""
@@ -17,60 +15,14 @@ class Booking(CreatedBaseModel):
         COMPLETED = 'completed', _('Завершен')
         CANCELED = 'canceled', _('Отменен')
 
-
-    order = ForeignKey(
-        'apps.Order',
-        CASCADE,
-        related_name='bookings',
-        verbose_name=_('Заказ')
-    )
-
-    interpreter = ForeignKey(
-        'apps.Interpreter',
-        CASCADE,
-        related_name='bookings',
-        verbose_name=_('Переводчик')
-    )
-
-    status = CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.OFFERED,
-        verbose_name=_('Статус')
-    )
-
-    offered_at = DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Дата предложения')
-    )
-
-    responded_at = DateTimeField(
-        null=True,
-        blank=True,
-        verbose_name=_('Дата ответа')
-    )
-
-    actual_hours = DecimalField(
-        max_digits=5,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name=_('Фактические часы')
-    )
-
-    payout = DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        null=True,
-        blank=True,
-        verbose_name=_('Сумма оплаты')
-    )
-
-    rate = DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name=_('Ставка для переводчика')
-    )
+    order = ForeignKey('apps.Order', CASCADE, related_name='bookings', verbose_name=_('Заказ'))
+    interpreter = ForeignKey('apps.Interpreter', CASCADE, related_name='bookings', verbose_name=_('Переводчик'))
+    status = CharField(_('Статус'), max_length=20, choices=Status.choices, default=Status.OFFERED)
+    offered_at = DateTimeField(_('Дата предложения'), auto_now_add=True)
+    responded_at = DateTimeField(_('Дата ответа'), null=True, blank=True)
+    actual_hours = DecimalField(_('Фактические часы'), max_digits=5, decimal_places=2, null=True, blank=True)
+    payout = DecimalField(_('Сумма оплаты'), max_digits=10, decimal_places=2, null=True, blank=True)
+    rate = DecimalField(_('Ставка для переводчика'), max_digits=10, decimal_places=2)
 
     class Meta:
         db_table = 'bookings'

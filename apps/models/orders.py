@@ -63,11 +63,7 @@ class Order(CreatedBaseModel):
 
     # ===== ЛОКАЦИЯ =====
 
-    location_type = CharField(
-        max_length=20,
-        choices=LocationType.choices,
-        verbose_name=_('Тип локации')
-    )
+    location_type = CharField(_('Тип локации'), max_length=20, choices=LocationType.choices)
 
     city = ForeignKey(
         'apps.City',
@@ -78,38 +74,16 @@ class Order(CreatedBaseModel):
         help_text=_('Обязательно, если не онлайн')
     )
 
-    address = TextField(
-        blank=True,
-        verbose_name=_('Адрес'),
-        help_text=_('Опционально')
-    )
+    address = TextField(_('Адрес'), blank=True, help_text=_('Опционально'))
 
     # ===== ДЕТАЛИ ОНЛАЙН =====
-
-    online_platform = CharField(
-        max_length=100,
-        choices=PlatformChoises.choices,
-        blank=True,
-        verbose_name=_('Платформа'),
-    )
-
-    online_link = URLField(
-        blank=True,
-        verbose_name='Ссылка на встречу'
-    )
+    online_platform = CharField(_('Платформа'), max_length=100, choices=PlatformChoises.choices, blank=True)
+    online_link = URLField('Ссылка на встречу', blank=True)
 
     # ===== ТИП ПЕРЕВОДА =====
+    translation_type = CharField(_('Тип перевода'), max_length=20, choices=TranslationType.choices, )
 
-    translation_type = CharField(
-        max_length=20,
-        choices=TranslationType.choices,
-        verbose_name=_('Тип перевода')
-    )
-
-    interpreter_count = PositiveSmallIntegerField(
-        default=1,
-        verbose_name=_('Количество переводчиков')
-    )
+    interpreter_count = PositiveSmallIntegerField(_('Количество переводчиков'), default=1)
 
     # specialization = ? # TASK
 

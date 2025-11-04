@@ -28,11 +28,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractUser, PermissionsMixin, UUIDBaseModel):
     """Основная модель пользователя"""
-    phone = CharField(
-        max_length=9,
-        blank=True,
-        verbose_name=_('Телефон')
-    )
+    phone = CharField(_('Телефон'), max_length=9, blank=True)
     email = EmailField(unique=True)
     username = None
     is_verified = BooleanField(default=False)
@@ -109,31 +105,17 @@ class Client(User):
         verbose_name=_('Название компании')
     )
 
-    tax_id = CharField(
-        max_length=50,
-        blank=True,
-        unique=True,
-        null=True,
-        verbose_name=_('ИНН')
-    )
-
-    legal_address = TextField(
-        blank=True,
-        verbose_name=_('Юридический адрес')
-    )
+    tax_id = CharField(_('ИНН'), max_length=50, blank=True, unique=True, null=True)
+    legal_address = TextField(_('Юридический адрес'), blank=True)
 
     # Метаданные
-    is_active = BooleanField(
-        default=False,
-        verbose_name=_('Активен')
-    )
+    is_active = BooleanField(_('Активен'), default=False)
 
     class Meta:
         db_table = 'clients'
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
         ordering = ['-created_at']
-
 
     def __str__(self):
         if self.client_type == self.ClientType.INDIVIDUAL:
