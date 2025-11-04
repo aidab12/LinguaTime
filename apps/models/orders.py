@@ -36,7 +36,7 @@ class Order(CreatedBaseModel):
         COMPLETED = 'completed', _('Завершён')
         CANCELLED = 'cancelled', _('Отменён')
 
-    class PlatformChoises(TextChoices):
+    class PlatformChoices(TextChoices):
         GOOGLE_MEET = 'google_meet', 'Google-Meet'
         ZOOM = 'zoom', 'Zoom'
         SKYPE = 'skype', 'Skype'
@@ -53,13 +53,8 @@ class Order(CreatedBaseModel):
 
     # ===== ВРЕМЯ И ДАТА =====
 
-    start_datetime = DateTimeField(
-        verbose_name=_('Дата и время начала')
-    )
-
-    end_datetime = DateTimeField(
-        verbose_name=_('Дата и время окончания')
-    )
+    start_datetime = DateTimeField(_('Дата и время начала'))
+    end_datetime = DateTimeField(_('Дата и время окончания'))
 
     # ===== ЛОКАЦИЯ =====
 
@@ -77,15 +72,12 @@ class Order(CreatedBaseModel):
     address = TextField(_('Адрес'), blank=True, help_text=_('Опционально'))
 
     # ===== ДЕТАЛИ ОНЛАЙН =====
-    online_platform = CharField(_('Платформа'), max_length=100, choices=PlatformChoises.choices, blank=True)
+    online_platform = CharField(_('Платформа'), max_length=100, choices=PlatformChoices.choices, blank=True)
     online_link = URLField('Ссылка на встречу', blank=True)
 
     # ===== ТИП ПЕРЕВОДА =====
     translation_type = CharField(_('Тип перевода'), max_length=20, choices=TranslationType.choices, )
-
     interpreter_count = PositiveSmallIntegerField(_('Количество переводчиков'), default=1)
-
-    # specialization = ? # TASK
 
     # ===== ЯЗЫКИ (многие-ко-многим) =====
 
@@ -107,15 +99,9 @@ class Order(CreatedBaseModel):
 
     # ===== ДОПОЛНИТЕЛЬНЫЕ УСЛОВИЯ =====
 
-    requires_business_trip = BooleanField(
-        default=False,
-        verbose_name=_('Требуется командировка')
-    )
+    requires_business_trip = BooleanField(_('Требуется командировка'), default=False)
 
-    requires_hotel = BooleanField(
-        default=False,
-        verbose_name=_('Требуется отель')
-    )
+    requires_hotel = BooleanField(_('Требуется отель'), default=False)
 
     gender_requirement = CharField(
         max_length=20,
@@ -161,7 +147,6 @@ class Order(CreatedBaseModel):
     # ===== META =====
 
     class Meta:
-        db_table = 'orders'
         verbose_name = _('Заказ')
         verbose_name_plural = _('Заказы')
         ordering = ['-created_at']
@@ -201,10 +186,6 @@ class Order(CreatedBaseModel):
 
         if errors:
             raise ValidationError(errors)
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
 
     @property
     def duration_hours(self):
