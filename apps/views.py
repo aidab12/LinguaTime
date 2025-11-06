@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.views.generic import CreateView, TemplateView
 
 from apps.forms import CustomClientCreationForm, RegisterInterpreterModelForm
-from apps.models import Interpreter
+from apps.models import Interpreter, City, Language
 
 
 # class LoginAuthView(LoginView):
@@ -38,7 +38,15 @@ class RegisterInterpreterCreateView(CreateView):
     model = Interpreter
     form_class = RegisterInterpreterModelForm
     template_name = 'apps/auth/singup.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['cities'] = City.objects.all()
+        ctx['languages'] = Language.objects.all()
+        return ctx
+
     # success_url = reverse_lazy('interpreter_dashboard')
+
 
 
     def form_valid(self, form):

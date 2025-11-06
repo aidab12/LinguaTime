@@ -97,18 +97,20 @@
                     style="flex: 1; padding: 0.875rem; border-radius: 0.5rem; font-weight: 600; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;">
                 <span id="interpreter-label">Interpreter</span></button>
         </div>
-        <form id="registration-form" , method="post" action="{% url 'register' %}"><!-- Common Fields -->
+        <form id="registration-form" , method="post" action="{% url 'interpreter_signup' %}"><!-- Common Fields -->
             {% csrf_token %}
             <div class="form-field" style="margin-bottom: 1.25rem;">
                 <label for="first-name"
-                       style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">First Name<span style="color: #ef4444;">*</span>
+                       style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">First Name<span
+                        style="color: #ef4444;">*</span>
                 </label>
                 <input type="text" name="first_name" id="first-name" required
                        style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
             </div>
             <div class="form-field" style="margin-bottom: 1.25rem;"><label for="last-name"
                                                                            style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Last
-                Name <span style="color: #ef4444;">*</span></label> <input type="text" name="last_name" id="last-name" required
+                Name <span style="color: #ef4444;">*</span></label> <input type="text" name="last_name" id="last-name"
+                                                                           required
                                                                            style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
             </div>
             <div class="form-field" style="margin-bottom: 1.25rem;"><label for="phone"
@@ -123,19 +125,21 @@
             </div>
             <div class="form-field" style="margin-bottom: 1.25rem;"><label for="password"
                                                                            style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Password
-                <span style="color: #ef4444;">*</span></label> <input type="password" name="password1" id="password" required
+                <span style="color: #ef4444;">*</span></label> <input type="password" name="password" id="password"
+                                                                      required
                                                                       style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
             </div>
             <div class="form-field" style="margin-bottom: 1.25rem;"><label for="confirm-password"
                                                                            style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Confirm
-                Password <span style="color: #ef4444;">*</span></label> <input type="password" name="password2" id="confirm-password"
+                Password <span style="color: #ef4444;">*</span></label> <input type="password" name="confirm_password"
+                                                                               id="confirm-password"
                                                                                required
                                                                                style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem;">
             </div><!-- Interpreter-only Fields -->
             <div id="interpreter-fields" class="hidden">
                 <div class="form-field" style="margin-bottom: 1.25rem;"><label for="gender"
                                                                                style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Gender
-                    <span style="color: #ef4444;">*</span></label> <select id="gender"
+                    <span style="color: #ef4444;">*</span></label> <select name="gender" id="gender"
                                                                            style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; background: white;">
                     <option value="">Select gender</option>
                     <option value="male">Male</option>
@@ -144,20 +148,19 @@
                 </div>
                 <div class="form-field" style="margin-bottom: 1.25rem;"><label for="city"
                                                                                style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">City
-                    <span style="color: #ef4444;">*</span></label> <select id="city"
+                    <span style="color: #ef4444;">*</span></label> <select name="city" id="city"
                                                                            style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1rem; background: white;">
-                    <option value="Tashkent">Tashkent</option>
-                    <option value="Samarkand">Samarkand</option>
-                    <option value="Bukhara">Bukhara</option>
-                    <option value="Andijan">Andijan</option>
-                    <option value="Namangan">Namangan</option>
-                    <option value="Fergana">Fergana</option>
+                    {% for city in cities %}
+                        <option value="{{ city.id }}">{{ city.name }}</option>
+                    {% endfor %}
+
+
                 </select>
                 </div>
                 <div class="form-field" style="margin-bottom: 1.25rem;"><label
                         style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Ready for Trips
                     <span style="color: #ef4444;">*</span></label>
-                    <div class="checkbox-wrapper"><input type="checkbox" name="ready_for_trips" id="ready-trips"
+                    <div class="checkbox-wrapper"><input type="checkbox" name="is_ready_for_trips" id="ready-trips"
                                                          style="width: 1.25rem; height: 1.25rem; cursor: pointer;">
                         <label for="ready-trips" style="cursor: pointer; color: #6b7280;">I am ready for business
                             trips</label>
@@ -167,15 +170,18 @@
                         style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #374151;">Languages <span
                         style="color: #ef4444;">*</span></label>
                     <div id="languages-list" style="border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem;">
-                        <div class="multiselect-option" data-value="eng_ru"><input type="checkbox" value="eng_ru"
+                        <div class="multiselect-option" data-value="eng_ru"><input type="checkbox" name="language"
+                                                                                   value="eng_ru"
                                                                                    style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
                             <span>English - Russian</span>
                         </div>
-                        <div class="multiselect-option" data-value="ru_uz"><input type="checkbox" value="ru_uz"
+                        <div class="multiselect-option" data-value="ru_uz"><input type="checkbox" name="language"
+                                                                                  value="ru_uz"
                                                                                   style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
                             <span>Russian - Uzbek</span>
                         </div>
-                        <div class="multiselect-option" data-value="en_uz"><input type="checkbox" value="en_uz"
+                        <div class="multiselect-option" data-value="en_uz"><input type="checkbox" name="language"
+                                                                                  value="en_uz"
                                                                                   style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
                             <span>English - Uzbek</span>
                         </div>
@@ -187,16 +193,20 @@
                     <div id="translation-type-list"
                          style="border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem;">
                         <div class="multiselect-option" data-value="simultaneous"><input type="checkbox"
+                                                                                         name="translation_type"
                                                                                          value="simultaneous"
                                                                                          style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
                             <span>Simultaneous</span>
                         </div>
                         <div class="multiselect-option" data-value="consecutive"><input type="checkbox"
+                                                                                        name="translation_type"
                                                                                         value="consecutive"
                                                                                         style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
                             <span>Consecutive</span>
                         </div>
-                        <div class="multiselect-option" data-value="written"><input type="checkbox" value="written"
+                        <div class="multiselect-option" data-value="written"><input type="checkbox"
+                                                                                    name="translation_type"
+                                                                                    value="written"
                                                                                     style="width: 1.125rem; height: 1.125rem; cursor: pointer;">
                             <span>Written</span>
                         </div>
@@ -310,12 +320,13 @@
     });
 
     form.addEventListener('submit', (e) => {
-        e.preventDefault();
+
 
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
 
         if (password !== confirmPassword) {
+            e.preventDefault();
             const errorDiv = document.createElement('div');
             errorDiv.style.cssText = 'margin-top: 1rem; padding: 1rem; background: #fee2e2; border: 2px solid #ef4444; border-radius: 0.5rem; color: #991b1b; text-align: center; font-weight: 600;';
             errorDiv.textContent = 'Passwords do not match!';
