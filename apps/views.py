@@ -1,7 +1,12 @@
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.contrib import messages
 from django.views.generic import CreateView, TemplateView
 
-from apps.forms import CustomClientCreationForm
+from apps.forms import CustomClientCreationForm, RegisterInterpreterModelForm
+from apps.models import Interpreter
 
 
 # class LoginAuthView(LoginView):
@@ -29,6 +34,26 @@ class RegisterCreateView(CreateView):
     form_class = CustomClientCreationForm
 
 
+class RegisterInterpreterCreateView(CreateView):
+    model = Interpreter
+    form_class = RegisterInterpreterModelForm
+    template_name = 'apps/auth/singup.html'
+    # success_url = reverse_lazy('interpreter_dashboard')
+
+
+    def form_valid(self, form):
+        interpreter = form.save()
+        login(self.request, interpreter) # автоматически авторизовать после регистрации
+        messages.success(self.request, "Account successfully created.")
+
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Please correct the errors below.")
+        return super().form_invalid(form)
+
+
+
+
 class UserProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'apps/client/main_filter.html'
-

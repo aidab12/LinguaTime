@@ -1,13 +1,10 @@
-from django.contrib.auth import authenticate, update_session_auth_hash
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UsernameField, UserCreationForm
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from django.forms import Form, CharField, ModelForm, EmailField
-from django.forms.fields import BooleanField
-from django.forms.utils import ErrorList
-from django.utils.timezone import now
+from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput
 
-from apps.models import User, Order, Interpreter
+from apps.models import User, Interpreter
 
 
 class LoginForm(Form):
@@ -38,8 +35,7 @@ class CustomClientCreationForm(UserCreationForm):
 
 
 class RegisterInterpreterModelForm(ModelForm):
-
-    confirm_password = CharField(max_length=128)
+    confirm_password = CharField(max_length=128, widget=PasswordInput())
 
     class Meta:
         model = Interpreter
@@ -56,33 +52,47 @@ class RegisterInterpreterModelForm(ModelForm):
             'translation_type',
 
         )
+        widgets = {
+            'password': PasswordInput(),
+        }
 
     def clean_first_name(self):
         first_name = self.cleaned_data.get('first_name')
         return first_name.title()
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and self.Meta.model.objects.filter(email=email).exist():
+            raise ValidationError("Email already exists")
+        return email
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone and self.Meta.model.objects.filter(phone=phone).exists():
+            raise ValidationError("Phone already exists")
+        return phone
+
     def clean(self):
         cleaned_data = super().clean()
-        email = cleaned_data.get('email')
-        phone = cleaned_data.get('phone')
-
-        model = self.Meta.model
-        if model.objects.filter(phone=phone).exists():
-            raise ValidationError("Phone already exists")
-
-        if model.objects.filter(email=email).exists():
-            raise ValidationError("Email already exists")
-
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
 
         if password and confirm_password and password != confirm_password:
             raise ValidationError("Passwords don't match")
 
-
-        cleaned_data['password'] = make_password(cleaned_data['password'])
         return cleaned_data
 
+    def save(self, commit = True):
+        interpreter = super().save(commit=False)
+        password = self.cleaned_data.get('password')
+
+        if password:
+            interpreter.password = make_password(password)
+        if commit:
+            interpreter.save()
+            self.save_m2m()
+
+        return interpreter
 
 # class ProfileChangePasswordModelForm(ModelForm):
 #     old_password = CharField(max_length=128, required=True)
