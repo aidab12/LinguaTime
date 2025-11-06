@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ru">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход в систему</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="min-h-full flex items-center justify-center p-6">
+  <div class="w-full max-w-md">
+   <div class="bg-white rounded-2xl shadow-xl p-8">
+    <div class="text-center mb-8">
+     <h1 id="page-title" class="text-3xl font-bold mb-2">Вход</h1>
+     <p id="page-subtitle" class="text-gray-600">Войдите в свой аккаунт</p>
+    </div><button id="google-btn" type="button" class="w-full flex items-center justify-center gap-3 bg-white border-2 rounded-xl px-6 py-3 font-semibold transition-all hover:bg-gray-50 mb-6">
+     <svg width="20" height="20" viewbox="0 0 20 20" fill="none"><path d="M19.8 10.2273C19.8 9.51819 19.7364 8.83637 19.6182 8.18182H10.2V12.05H15.6109C15.3727 13.3 14.6636 14.3591 13.6045 15.0682V17.5773H16.8273C18.7091 15.8364 19.8 13.2727 19.8 10.2273Z" fill="#4285F4" /> <path d="M10.2 20C12.9 20 15.1709 19.1045 16.8273 17.5773L13.6045 15.0682C12.7091 15.6682 11.5636 16.0227 10.2 16.0227C7.59545 16.0227 5.38182 14.2636 4.58636 11.9H1.25455V14.4909C2.90182 17.7591 6.30909 20 10.2 20Z" fill="#34A853" /> <path d="M4.58636 11.9C4.38636 11.3 4.27273 10.6591 4.27273 10C4.27273 9.34091 4.38636 8.7 4.58636 8.1V5.50909H1.25455C0.572727 6.85909 0.2 8.38636 0.2 10C0.2 11.6136 0.572727 13.1409 1.25455 14.4909L4.58636 11.9Z" fill="#FBBC05" /> <path d="M10.2 3.97727C11.6864 3.97727 13.0182 4.48182 14.0636 5.47273L16.9182 2.61818C15.1664 0.986364 12.8955 0 10.2 0C6.30909 0 2.90182 2.24091 1.25455 5.50909L4.58636 8.1C5.38182 5.73636 7.59545 3.97727 10.2 3.97727Z" fill="#EA4335" />
+     </svg><span id="google-button-text">Войти через Google</span> </button>
+    <div class="flex items-center gap-4 mb-6">
+     <div class="flex-1 h-px bg-gray-300"></div><span class="text-gray-500 text-sm">или</span>
+     <div class="flex-1 h-px bg-gray-300"></div>
+    </div>
+    <form id="login-form" class="space-y-4">
+     <div><label for="email" id="email-label" class="block text-sm font-medium mb-2">Email</label> <input type="email" id="email" name="email" required class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all" placeholder="example@email.com">
+     </div>
+     <div><label for="password" id="password-label" class="block text-sm font-medium mb-2">Пароль</label> <input type="password" id="password" name="password" required class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all" placeholder="Введите пароль">
+     </div>
+     <div class="flex items-center justify-between"><label class="flex items-center"> <input type="checkbox" id="remember-me" name="rememberMe" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-sm text-gray-600">Запомнить меня</span> </label> <a href="#" id="forgot-password" class="text-sm font-medium hover:underline">Забыли пароль?</a>
+     </div>
+     <div id="message-container" class="hidden p-4 rounded-xl text-sm"></div><button type="submit" id="login-btn" class="w-full font-semibold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl"> <span id="login-button-text">Войти</span> </button>
+    </form>
+    <div class="text-center mt-6">
+     <p class="text-gray-600">Нет аккаунта? <a href="#" id="signup-link" class="font-medium hover:underline">Зарегистрироваться</a></p>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: "#f0f4f8",
+      surface_color: "#ffffff",
+      text_color: "#1f2937",
+      primary_action_color: "#3b82f6",
+      secondary_action_color: "#6b7280",
+      font_family: "system-ui",
+      font_size: 16,
+      page_title: "Вход",
+      page_subtitle: "Войдите в свой аккаунт",
+      google_button_text: "Войти через Google",
+      login_button_text: "Войти",
+      email_label: "Email",
+      password_label: "Пароль",
+      forgot_password_text: "Забыли пароль?",
+      signup_text: "Зарегистрироваться"
+    };
+
+    async function onConfigChange(config) {
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      document.body.style.backgroundColor = backgroundColor;
+      document.body.style.fontFamily = `${fontFamily}, system-ui, -apple-system, sans-serif`;
+
+      const card = document.querySelector('.bg-white');
+      card.style.backgroundColor = surfaceColor;
+
+      document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('page-title').style.color = textColor;
+      document.getElementById('page-title').style.fontSize = `${fontSize * 1.875}px`;
+
+      document.getElementById('page-subtitle').textContent = config.page_subtitle || defaultConfig.page_subtitle;
+      document.getElementById('page-subtitle').style.color = secondaryColor;
+      document.getElementById('page-subtitle').style.fontSize = `${fontSize}px`;
+
+      document.getElementById('google-button-text').textContent = config.google_button_text || defaultConfig.google_button_text;
+      document.getElementById('google-btn').style.color = textColor;
+      document.getElementById('google-btn').style.borderColor = secondaryColor;
+      document.getElementById('google-btn').style.fontSize = `${fontSize}px`;
+
+      document.getElementById('login-button-text').textContent = config.login_button_text || defaultConfig.login_button_text;
+      document.getElementById('login-btn').style.backgroundColor = primaryColor;
+      document.getElementById('login-btn').style.color = surfaceColor;
+      document.getElementById('login-btn').style.fontSize = `${fontSize}px`;
+
+      document.getElementById('email-label').textContent = config.email_label || defaultConfig.email_label;
+      document.getElementById('email-label').style.color = textColor;
+      document.getElementById('email-label').style.fontSize = `${fontSize * 0.875}px`;
+
+      document.getElementById('password-label').textContent = config.password_label || defaultConfig.password_label;
+      document.getElementById('password-label').style.color = textColor;
+      document.getElementById('password-label').style.fontSize = `${fontSize * 0.875}px`;
+
+      document.getElementById('forgot-password').textContent = config.forgot_password_text || defaultConfig.forgot_password_text;
+      document.getElementById('forgot-password').style.color = primaryColor;
+      document.getElementById('forgot-password').style.fontSize = `${fontSize * 0.875}px`;
+
+      document.getElementById('signup-link').textContent = config.signup_text || defaultConfig.signup_text;
+      document.getElementById('signup-link').style.color = primaryColor;
+      document.getElementById('signup-link').style.fontSize = `${fontSize}px`;
+
+      const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
+      inputs.forEach(input => {
+        input.style.borderColor = secondaryColor;
+        input.style.color = textColor;
+        input.style.fontSize = `${fontSize}px`;
+      });
+
+      const grayTexts = document.querySelectorAll('.text-gray-600');
+      grayTexts.forEach(text => {
+        text.style.color = secondaryColor;
+        text.style.fontSize = `${fontSize}px`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["page_title", config.page_title || defaultConfig.page_title],
+        ["page_subtitle", config.page_subtitle || defaultConfig.page_subtitle],
+        ["google_button_text", config.google_button_text || defaultConfig.google_button_text],
+        ["login_button_text", config.login_button_text || defaultConfig.login_button_text],
+        ["email_label", config.email_label || defaultConfig.email_label],
+        ["password_label", config.password_label || defaultConfig.password_label],
+        ["forgot_password_text", config.forgot_password_text || defaultConfig.forgot_password_text],
+        ["signup_text", config.signup_text || defaultConfig.signup_text]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    document.getElementById('google-btn').addEventListener('click', function() {
+      showMessage('Вход через Google будет доступен после интеграции с Google OAuth', 'info');
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const email = formData.get('email');
+      const password = formData.get('password');
+      const rememberMe = formData.get('rememberMe');
+
+      if (!email || !password) {
+        showMessage('Пожалуйста, заполните все поля', 'error');
+        return;
+      }
+
+      const loginData = {
+        email: email,
+        password: password,
+        rememberMe: !!rememberMe
+      };
+
+      showMessage(`Успешный вход! Email: ${email}`, 'success');
+      console.log('Login data:', loginData);
+    });
+
+    document.getElementById('forgot-password').addEventListener('click', function(e) {
+      e.preventDefault();
+      showMessage('Функция восстановления пароля будет доступна позже', 'info');
+    });
+
+    document.getElementById('signup-link').addEventListener('click', function(e) {
+      e.preventDefault();
+      showMessage('Перенаправление на страницу регистрации...', 'info');
+    });
+
+    function showMessage(text, type) {
+      const container = document.getElementById('message-container');
+      container.textContent = text;
+      container.className = 'p-4 rounded-xl text-sm';
+
+      if (type === 'success') {
+        container.classList.add('bg-green-100', 'text-green-800');
+      } else if (type === 'error') {
+        container.classList.add('bg-red-100', 'text-red-800');
+      } else {
+        container.classList.add('bg-blue-100', 'text-blue-800');
+      }
+
+      container.classList.remove('hidden');
+
+      setTimeout(() => {
+        container.classList.add('hidden');
+      }, 5000);
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9993968334d13834',t:'MTc2MjI1MzgxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

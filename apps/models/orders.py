@@ -12,44 +12,33 @@ class Order(CreatedBaseModel):
     # ===== CHOICES =====
 
     class LocationType(TextChoices):
-        ONSITE = 'onsite', _('На Месте')
-        ONLINE = 'online', _('Онлайн')
+        ONSITE = 'onsite', _('Onsite')
+        ONLINE = 'online', _('Online')
 
     class TranslationType(TextChoices):
-        SIMULTANEOUS = 'simultaneous', _('Синхронный')
-        CONSECUTIVE = 'consecutive', _('Последовательный')
-        WRITTEN = 'written', _('Письменный')
+        SIMULTANEOUS = 'simultaneous', _('Simultaneous')
+        CONSECUTIVE = 'consecutive', _('Consecutive')
+        WRITTEN = 'written', _('Written')
 
     class FormalityLevel(TextChoices):
-        BUSINESS = 'business', _('Рабочий')
-        OFFICIAL = 'official', _('Официальный')
+        BUSINESS = 'business', _('Business')
+        OFFICIAL = 'official', _('Official')
 
     class GenderRequirement(TextChoices):
-        NO_PREFERENCE = 'no_preference', _('Не важно')
-        MALE = 'male', _('Мужчина')
-        FEMALE = 'female', _('Женщина')
+        NO_PREFERENCE = 'no_preference', _('no_preference')
+        MALE = 'male', _('male')
+        FEMALE = 'female', _('female')
 
     class OrderStatus(TextChoices):
         NEW = 'new', _('Новый')
-        SEARCHING = 'searching', _('В поиске переводчика')
-        ASSIGNED = 'assigned', _('Переводчик назначен')
-        COMPLETED = 'completed', _('Завершён')
-        CANCELLED = 'cancelled', _('Отменён')
-
-    class PlatformChoices(TextChoices):
-        GOOGLE_MEET = 'google_meet', 'Google-Meet'
-        ZOOM = 'zoom', 'Zoom'
-        SKYPE = 'skype', 'Skype'
-        TELEGRAM = 'telegram', 'Telegram'
+        SEARCHING = 'searching', _('searching')
+        ASSIGNED = 'assigned', _('assigned')
+        COMPLETED = 'completed', _('completed')
+        CANCELLED = 'cancelled', _('cancelled')
 
     # ===== ОСНОВНЫЕ ПОЛЯ =====
 
-    client = ForeignKey(
-        'apps.Client',
-        PROTECT,  # Нельзя удалить клиента с заказами
-        related_name='orders',
-        verbose_name=_('Клиент')
-    )
+    client = ForeignKey('apps.Client', PROTECT, related_name='orders', verbose_name=_('Клиент'))
 
     # ===== ВРЕМЯ И ДАТА =====
 
@@ -60,91 +49,17 @@ class Order(CreatedBaseModel):
 
     location_type = CharField(_('Тип локации'), max_length=20, choices=LocationType.choices)
 
-    city = ForeignKey(
-        'apps.City',
-        PROTECT,
-        blank=True,
-        null=True,
-        verbose_name=_('Город'),
-        help_text=_('Обязательно, если не онлайн')
-    )
+    city = ForeignKey('apps.City', PROTECT, blank=True, null=True, verbose_name=_('Город'),
+                      help_text=_('Обязательно, если не онлайн')
+                      )
 
-    address = TextField(_('Адрес'), blank=True, help_text=_('Опционально'))
-
-    # ===== ДЕТАЛИ ОНЛАЙН =====
-    online_platform = CharField(_('Платформа'), max_length=100, choices=PlatformChoices.choices, blank=True)
-    online_link = URLField('Ссылка на встречу', blank=True)
-
-    # ===== ТИП ПЕРЕВОДА =====
-    translation_type = CharField(_('Тип перевода'), max_length=20, choices=TranslationType.choices)
-    interpreter_count = PositiveSmallIntegerField(_('Количество переводчиков'), default=1)
-
-    # ===== ЯЗЫКИ (многие-ко-многим) =====
-
-    languages = ManyToManyField(
-        'apps.Language',
-        related_name='orders',
-        verbose_name=_('Языки перевода'),
-        help_text=_('Можно выбрать несколько языковых пар')
-    )
-
-    # ===== УРОВЕНЬ ОФИЦИАЛЬНОСТИ =====
-
-    formality_level = CharField(
-        max_length=20,
-        choices=FormalityLevel.choices,
-        default=FormalityLevel.BUSINESS,
-        verbose_name=_('Уровень официальности')
-    )
-
-    # ===== ДОПОЛНИТЕЛЬНЫЕ УСЛОВИЯ =====
-
-    requires_business_trip = BooleanField(_('Требуется командировка'), default=False)
-
-    requires_hotel = BooleanField(_('Требуется отель'), default=False)
-
-    gender_requirement = CharField(
-        max_length=20,
-        choices=GenderRequirement.choices,
-        default=GenderRequirement.NO_PREFERENCE,
-        verbose_name=_('Требования к полу переводчика')
-    )
-
-    # ===== ФИНАНСЫ =====
-
-    client_budget = DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name=_('Бюджет клиента'),
-        help_text=_('В валюте USD')
-    )
-
-    interpreter_rate = DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        verbose_name=_('Ставка переводчика')
-    )
-
-    # ===== СТАТУС =====
-
-    status = CharField(
-        max_length=20,
-        choices=OrderStatus.choices,
-        default=OrderStatus.NEW,
-        verbose_name=_('Статус заказа'),
-    )
-
-    # ===== ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ =====
-
-    notes = TextField(
-        blank=True,
-        verbose_name=_('Примечания'),
-        help_text=_('Дополнительные пожелания клиента')
-    )
-
-    # ===== META =====
+    address = TextField()
+    translation_type = CharField(max_length=20, choices=TranslationType.choices)
+    interpreter_count = PositiveSmallIntegerField(default=1)
+    languages = ManyToManyField('apps.Language', related_name='orders')
+    formality_level = CharField(max_length=20, choices=FormalityLevel.choices, default=FormalityLevel.BUSINESS)
+    status = CharField(_('Статус заказа'), max_length=20, choices=OrderStatus.choices, default=OrderStatus.NEW)
+    notes = TextField(blank=True)
 
     class Meta:
         verbose_name = _('Заказ')
@@ -167,22 +82,18 @@ class Order(CreatedBaseModel):
         if self.location_type == self.LocationType.ONSITE and not self.city:
             errors['city'] = 'Для заказа в городе необходимо указать город'
 
-        if self.location_type == self.LocationType.ONLINE:
-            if not self.online_platform and not self.online_link:
-                errors['online_platform'] = 'Для онлайн заказа укажите платформу или ссылку'
-
         if self.interpreter_count and self.interpreter_count < 1:
             errors['interpreter_count'] = 'Количество переводчиков должно быть минимум 1'
 
-        if self.client_budget and self.client_budget < 0:
-            errors['client_budget'] = 'Бюджет не может быть отрицательным'
+        # if self.client_budget and self.client_budget < 0:
+        #     errors['client_budget'] = 'Бюджет не может быть отрицательным'
 
-        if self.interpreter_rate and self.interpreter_rate < 0:
-            errors['interpreter_rate'] = 'Ставка не может быть отрицательной'
+        # if self.interpreter_rate and self.interpreter_rate < 0:
+        #     errors['interpreter_rate'] = 'Ставка не может быть отрицательной'
 
-        if (self.interpreter_rate and self.client_budget and
-                self.interpreter_rate > self.client_budget):
-            errors['interpreter_rate'] = 'Ставка переводчика не может превышать бюджет клиента'
+        # if (self.interpreter_rate and self.client_budget and
+        #         self.interpreter_rate > self.client_budget):
+        #     errors['interpreter_rate'] = 'Ставка переводчика не может превышать бюджет клиента'
 
         if errors:
             raise ValidationError(errors)
@@ -200,13 +111,6 @@ class Order(CreatedBaseModel):
         """Проверка: онлайн заказ?"""
         return self.location_type == self.LocationType.ONLINE
 
-    # @property
-    # def platform_margin(self):
-    #     """Маржа платформы (разница между бюджетом и ставкой)"""
-    #     if self.interpreter_rate and self.client_budget:
-    #         return self.client_budget - self.interpreter_rate
-    #     return Decimal('0.00')
-
     def can_cancel(self):
         """Можно ли отменить заказ?"""
         return self.status in [
@@ -214,21 +118,17 @@ class Order(CreatedBaseModel):
             self.OrderStatus.SEARCHING
         ]
 
-    def assign_interpreter(self, interpreter, rate):
+    def assign_interpreter(self, interpreter):
         """Назначить переводчика на заказ"""
         if self.status not in [self.OrderStatus.NEW, self.OrderStatus.SEARCHING]:
             raise ValidationError('Можно назначить переводчика только на новый заказ или в поиске')
 
-        self.interpreter_rate = rate
+        # self.interpreter_rate = rate
         self.status = self.OrderStatus.ASSIGNED
         self.save()
 
         # Создать связь с переводчиком (через промежуточную модель)
-        OrderInterpreter.objects.create(
-            order=self,
-            interpreter=interpreter,
-            rate=rate
-        )
+        OrderInterpreter.objects.create(order=self,interpreter=interpreter)
 
 
 # ===== ПРОМЕЖУТОЧНАЯ МОДЕЛЬ ДЛЯ СВЯЗИ ЗАКАЗ-ПЕРЕВОДЧИК =====
@@ -236,30 +136,17 @@ class Order(CreatedBaseModel):
 class OrderInterpreter(UUIDBaseModel):
     """Связь заказа с переводчиками (для нескольких переводчиков)"""
 
-    order = ForeignKey(
-        'apps.Order',
-        CASCADE,
-        related_name='assigned_interpreters',
-        verbose_name=_('Заказ')
-    )
+    order = ForeignKey('apps.Order', CASCADE, related_name='assigned_interpreters', verbose_name=_('Заказ'))
 
-    interpreter = ForeignKey(
-        'apps.Interpreter',
-        CASCADE,
-        related_name='assigned_orders',
-        verbose_name=_('Переводчик')
-    )
+    interpreter = ForeignKey('apps.Interpreter', CASCADE, related_name='assigned_orders', verbose_name=_('Переводчик'))
 
-    rate = DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name=_('Ставка переводчика')
-    )
+    # rate = DecimalField(
+    #     max_digits=10,
+    #     decimal_places=2,
+    #     verbose_name=_('Ставка переводчика')
+    # )
 
-    assigned_at = DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('Дата назначения')
-    )
+    assigned_at = DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'order_interpreters'

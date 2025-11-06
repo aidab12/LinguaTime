@@ -8,3 +8,14 @@ Task
 5.
 
 
+
+изменения для страницы регистрации:
+- Имя *
+- Фамилия *
+- Телефон *
+- Email *
+- gender = (male, female)
+- Город (по умолчанию вибран Ташкент)
+- is_ready_for_trips (checkbox)
+- translation_type = (simultaneous, consecutive, written)
+- языки (eng_ru, ru_uz, en_uz)

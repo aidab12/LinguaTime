@@ -9,7 +9,7 @@ msg:
 
 # loaddata
 load:
-	python3 manage.py loaddata course_category user user_student instructor language topic course
+	python3 manage.py loaddata language
 
 super:
 	python3 manage.py createsuperuser

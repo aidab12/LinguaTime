@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="ru">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поиск переводчиков</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .filter-card {
+      transition: all 0.3s ease;
+    }
+
+    .filter-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .translator-card {
+      transition: all 0.3s ease;
+    }
+
+    .translator-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="min-h-full"><!-- Header -->
+  <header class="shadow-sm border-b">
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+     <div class="flex items-center">
+      <h1 id="page-title" class="text-2xl font-bold">TranslateUZ</h1>
+     </div>
+     <div class="flex items-center space-x-4"><span id="welcome-message" class="text-sm">Добро пожаловать, Клиент!</span> <button type="button" class="px-4 py-2 text-sm font-medium rounded-lg border transition-all hover:shadow-md"> Профиль </button> <button type="button" class="px-4 py-2 text-sm font-medium rounded-lg transition-all hover:shadow-md"> Выйти </button>
+     </div>
+    </div>
+   </div>
+  </header>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><!-- Search Section -->
+   <div class="mb-8">
+    <h2 id="search-title" class="text-3xl font-bold mb-6">Найти переводчика</h2>
+    <div class="rounded-2xl shadow-lg p-6">
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"><!-- Language Pair Filter -->
+      <div class="filter-card"><label for="language-pair" class="block text-sm font-medium mb-2">Языковая пара</label> <select id="language-pair" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all"> <option value="">Все языки</option> <option value="eng_ru">Английский → Русский</option> <option value="ru_uz">Русский → Узбекский</option> <option value="en_uz">Английский → Узбекский</option> </select>
+      </div><!-- City Filter -->
+      <div class="filter-card"><label for="city" class="block text-sm font-medium mb-2">Город</label> <select id="city" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all"> <option value="">Все города</option> <option value="tashkent" selected>Ташкент</option> <option value="samarkand">Самарканд</option> <option value="bukhara">Бухара</option> <option value="andijan">Андижан</option> <option value="namangan">Наманган</option> <option value="fergana">Фергана</option> <option value="nukus">Нукус</option> <option value="urgench">Ургенч</option> <option value="karshi">Карши</option> <option value="termez">Термез</option> </select>
+      </div><!-- Translation Type Filter -->
+      <div class="filter-card"><label for="translation-type" class="block text-sm font-medium mb-2">Тип перевода</label> <select id="translation-type" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all"> <option value="">Все типы</option> <option value="simultaneous">Синхронный</option> <option value="consecutive">Последовательный</option> <option value="written">Письменный</option> </select>
+      </div><!-- Time Period Filter -->
+      <div class="filter-card"><label for="time-period" class="block text-sm font-medium mb-2">Время работы</label> <select id="time-period" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all"> <option value="">Любое время</option> <option value="morning">Утро (9:00 - 13:00)</option> <option value="afternoon">День (14:00 - 18:00)</option> <option value="both">Весь день (9:00 - 18:00)</option> </select>
+      </div>
+     </div><!-- Date Range and Translator Count Filter -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div class="filter-card"><label for="date-from" class="block text-sm font-medium mb-2">Дата начала</label> <input type="date" id="date-from" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all">
+      </div>
+      <div class="filter-card"><label for="date-to" class="block text-sm font-medium mb-2">Дата окончания</label> <input type="date" id="date-to" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all">
+      </div>
+      <div class="filter-card"><label for="translator-count" class="block text-sm font-medium mb-2">Количество переводчиков</label> <select id="translator-count" class="w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all"> <option value="">Любое количество</option> <option value="1">1 переводчик</option> <option value="2">2 переводчика</option> <option value="3">3 переводчика</option> <option value="4">4 переводчика</option> <option value="5+">5+ переводчиков</option> </select>
+      </div>
+     </div><!-- Search Buttons -->
+     <div class="flex flex-col sm:flex-row gap-4"><button type="button" id="search-btn" class="flex-1 font-semibold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl"> <span id="search-button-text">Найти переводчиков</span> </button> <button type="button" id="clear-btn" class="px-6 py-3 font-medium rounded-xl border-2 transition-all hover:shadow-md"> <span id="clear-filters-text">Очистить фильтры</span> </button>
+     </div>
+    </div>
+   </div><!-- Results Section -->
+   <div id="results-section" class="hidden">
+    <div class="flex justify-between items-center mb-6">
+     <h3 class="text-2xl font-bold">Результаты поиска</h3><span id="results-count" class="px-4 py-2 rounded-full text-sm font-medium">Найдено: 0</span>
+    </div>
+    <div id="translators-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Translator cards will be inserted here -->
+    </div>
+   </div><!-- No Results Message -->
+   <div id="no-results" class="hidden text-center py-12">
+    <div class="text-6xl mb-4">
+     🔍
+    </div>
+    <h3 class="text-xl font-semibold mb-2">Переводчики не найдены</h3>
+    <p class="text-gray-600">Попробуйте изменить параметры поиска</p>
+   </div>
+  </main>
+  <script>
+    const defaultConfig = {
+      background_color: "#f8fafc",
+      surface_color: "#ffffff",
+      text_color: "#1e293b",
+      primary_action_color: "#3b82f6",
+      secondary_action_color: "#64748b",
+      font_family: "system-ui",
+      font_size: 16,
+      page_title: "TranslateUZ",
+      welcome_message: "Добро пожаловать, Клиент!",
+      search_title: "Найти переводчика",
+      search_button_text: "Найти переводчиков",
+      clear_filters_text: "Очистить фильтры"
+    };
+
+    // Sample translator data
+    const sampleTranslators = [
+      {
+        id: 1,
+        name: "Анна Иванова",
+        languages: ["eng_ru"],
+        city: "tashkent",
+        types: ["simultaneous", "consecutive"],
+        rating: 4.9,
+        experience: "5+ лет",
+        hourlyRate: 2500,
+        avatar: "👩‍💼",
+        specializations: ["Медицинский", "Юридический"]
+      },
+      {
+        id: 2,
+        name: "Дмитрий Петров",
+        languages: ["ru_uz", "en_uz"],
+        city: "samarkand",
+        types: ["consecutive", "written"],
+        rating: 4.7,
+        experience: "3-5 лет",
+        hourlyRate: 2000,
+        avatar: "👨‍💼",
+        specializations: ["Технический", "Деловой"]
+      },
+      {
+        id: 3,
+        name: "Мария Сидорова",
+        languages: ["eng_ru", "en_uz"],
+        city: "tashkent",
+        types: ["simultaneous", "written"],
+        rating: 4.8,
+        experience: "5+ лет",
+        hourlyRate: 2800,
+        avatar: "👩‍🎓",
+        specializations: ["Научный", "Образовательный"]
+      },
+      {
+        id: 4,
+        name: "Алексей Козлов",
+        languages: ["ru_uz"],
+        city: "bukhara",
+        types: ["consecutive", "written"],
+        rating: 4.6,
+        experience: "1-3 года",
+        hourlyRate: 1800,
+        avatar: "👨‍🎓",
+        specializations: ["Туристический", "Культурный"]
+      }
+    ];
+
+    async function onConfigChange(config) {
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+
+      document.body.style.backgroundColor = backgroundColor;
+      document.body.style.fontFamily = `${fontFamily}, system-ui, -apple-system, sans-serif`;
+
+      const header = document.querySelector('header');
+      header.style.backgroundColor = surfaceColor;
+      header.style.borderColor = secondaryColor;
+
+      const searchCard = document.querySelector('.rounded-2xl');
+      searchCard.style.backgroundColor = surfaceColor;
+
+      document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('page-title').style.color = textColor;
+      document.getElementById('page-title').style.fontSize = `${fontSize * 1.5}px`;
+
+      document.getElementById('welcome-message').textContent = config.welcome_message || defaultConfig.welcome_message;
+      document.getElementById('welcome-message').style.color = secondaryColor;
+      document.getElementById('welcome-message').style.fontSize = `${fontSize * 0.875}px`;
+
+      document.getElementById('search-title').textContent = config.search_title || defaultConfig.search_title;
+      document.getElementById('search-title').style.color = textColor;
+      document.getElementById('search-title').style.fontSize = `${fontSize * 1.875}px`;
+
+      document.getElementById('search-button-text').textContent = config.search_button_text || defaultConfig.search_button_text;
+      document.getElementById('search-btn').style.backgroundColor = primaryColor;
+      document.getElementById('search-btn').style.color = surfaceColor;
+      document.getElementById('search-btn').style.fontSize = `${fontSize}px`;
+
+      document.getElementById('clear-filters-text').textContent = config.clear_filters_text || defaultConfig.clear_filters_text;
+      document.getElementById('clear-btn').style.borderColor = secondaryColor;
+      document.getElementById('clear-btn').style.color = textColor;
+      document.getElementById('clear-btn').style.fontSize = `${fontSize}px`;
+
+      const labels = document.querySelectorAll('label');
+      labels.forEach(label => {
+        label.style.color = textColor;
+        label.style.fontSize = `${fontSize * 0.875}px`;
+      });
+
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.style.borderColor = secondaryColor;
+        input.style.color = textColor;
+        input.style.fontSize = `${fontSize}px`;
+      });
+
+      const buttons = document.querySelectorAll('button:not(#search-btn):not(#clear-btn)');
+      buttons.forEach(button => {
+        button.style.borderColor = secondaryColor;
+        button.style.color = textColor;
+        button.style.fontSize = `${fontSize * 0.875}px`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["page_title", config.page_title || defaultConfig.page_title],
+        ["welcome_message", config.welcome_message || defaultConfig.welcome_message],
+        ["search_title", config.search_title || defaultConfig.search_title],
+        ["search_button_text", config.search_button_text || defaultConfig.search_button_text],
+        ["clear_filters_text", config.clear_filters_text || defaultConfig.clear_filters_text]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    function createTranslatorCard(translator) {
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      return `
+        <div class="translator-card rounded-2xl shadow-lg p-6" style="background-color: ${surfaceColor};">
+          <div class="flex items-center mb-4">
+            <div class="text-4xl mr-4">${translator.avatar}</div>
+            <div>
+              <h4 class="text-xl font-semibold" style="color: ${textColor};">${translator.name}</h4>
+              <div class="flex items-center mt-1">
+                <span class="text-yellow-500">⭐</span>
+                <span class="ml-1 text-sm font-medium" style="color: ${textColor};">${translator.rating}</span>
+                <span class="ml-2 text-sm" style="color: ${secondaryColor};">${translator.experience}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="flex flex-wrap gap-2 mb-2">
+              ${translator.languages.map(lang => {
+                const langNames = {
+                  'eng_ru': 'EN→RU',
+                  'ru_uz': 'RU→UZ',
+                  'en_uz': 'EN→UZ'
+                };
+                return `<span class="badge" style="background-color: ${primaryColor}20; color: ${primaryColor};">${langNames[lang]}</span>`;
+              }).join('')}
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${translator.types.map(type => {
+                const typeNames = {
+                  'simultaneous': 'Синхронный',
+                  'consecutive': 'Последовательный',
+                  'written': 'Письменный'
+                };
+                return `<span class="badge" style="background-color: ${secondaryColor}20; color: ${secondaryColor};">${typeNames[type]}</span>`;
+              }).join('')}
+            </div>
+          </div>
+
+
+
+          <div class="flex justify-end">
+            <button type="button" class="px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md" style="background-color: ${primaryColor}; color: ${surfaceColor};">
+              Связаться
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function filterTranslators() {
+      const languagePair = document.getElementById('language-pair').value;
+      const city = document.getElementById('city').value;
+      const translationType = document.getElementById('translation-type').value;
+      const dateFrom = document.getElementById('date-from').value;
+      const dateTo = document.getElementById('date-to').value;
+      const timePeriod = document.getElementById('time-period').value;
+      const translatorCount = document.getElementById('translator-count').value;
+
+      let filtered = sampleTranslators.filter(translator => {
+        if (languagePair && !translator.languages.includes(languagePair)) return false;
+        if (city && translator.city !== city) return false;
+        if (translationType && !translator.types.includes(translationType)) return false;
+        // Date and time filtering would be implemented based on translator availability
+        // For now, we'll show all translators that match other criteria
+        return true;
+      });
+
+      // Calculate required translator count based on translation type
+      let requiredCount = 1;
+      if (translationType === 'simultaneous') {
+        requiredCount = 2; // Синхронный перевод требует 2 переводчиков
+      } else if (translationType === 'consecutive') {
+        requiredCount = 1; // Последовательный перевод требует 1 переводчика
+      }
+
+      // Apply translator count filter
+      if (translatorCount) {
+        if (translatorCount === '5+') {
+          // For 5+ translators, we'll show all available translators
+          // In real implementation, this would check availability for the requested count
+        } else {
+          const requestedCount = parseInt(translatorCount);
+          // Use the maximum of requested count and required count based on translation type
+          const finalCount = Math.max(requestedCount, requiredCount);
+          filtered = filtered.slice(0, finalCount);
+        }
+      } else if (translationType) {
+        // If no specific count requested but translation type is selected, use required count
+        filtered = filtered.slice(0, requiredCount);
+      }
+
+      return filtered;
+    }
+
+    function displayResults(translators) {
+      const resultsSection = document.getElementById('results-section');
+      const noResults = document.getElementById('no-results');
+      const translatorsGrid = document.getElementById('translators-grid');
+      const resultsCount = document.getElementById('results-count');
+
+      if (translators.length === 0) {
+        resultsSection.classList.add('hidden');
+        noResults.classList.remove('hidden');
+        return;
+      }
+
+      noResults.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
+
+      const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+      const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+
+      resultsCount.textContent = `Найдено: ${translators.length}`;
+      resultsCount.style.backgroundColor = `${primaryColor}20`;
+      resultsCount.style.color = primaryColor;
+
+      translatorsGrid.innerHTML = translators.map(createTranslatorCard).join('');
+    }
+
+    // Smart translator count logic based on translation type
+    document.getElementById('translation-type').addEventListener('change', function() {
+      const translationType = this.value;
+      const translatorCountSelect = document.getElementById('translator-count');
+
+      if (translationType === 'simultaneous') {
+        // Синхронный перевод требует минимум 2 переводчиков
+        translatorCountSelect.value = '2';
+      } else if (translationType === 'consecutive' || translationType === 'written') {
+        // Последовательный и письменный перевод требуют 1 переводчика
+        translatorCountSelect.value = '1';
+      }
+    });
+
+    // Event listeners
+    document.getElementById('search-btn').addEventListener('click', function() {
+      const filtered = filterTranslators();
+      displayResults(filtered);
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', function() {
+      document.getElementById('language-pair').value = '';
+      document.getElementById('city').value = '';
+      document.getElementById('translation-type').value = '';
+      document.getElementById('date-from').value = '';
+      document.getElementById('date-to').value = '';
+      document.getElementById('time-period').value = '';
+      document.getElementById('translator-count').value = '';
+
+      document.getElementById('results-section').classList.add('hidden');
+      document.getElementById('no-results').classList.add('hidden');
+    });
+
+    // Initialize with all translators
+    displayResults(sampleTranslators);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'999b746d3364d269',t:'MTc2MjMzNjMwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

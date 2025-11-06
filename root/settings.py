@@ -27,13 +27,10 @@ INSTALLED_APPS = [
     'apps',
 
     # Third-Party apps
-    'drf_spectacular',
     'django_filters',
-    'rest_framework',
     'django_ckeditor_5',
     'location_field.apps.DefaultConfig',
     'django_celery_results',
-    # 'django_minio_backend',
     'django_extensions',
     'nested_admin',
 ]
@@ -131,37 +128,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Папка, где физически будут лежать файлы
 MEDIA_URL = "media/"  # Через какой URL их можно будет открыть
 
-# _______________________________MinIO_______________________________#
-
-MINIO_ENDPOINT = os.getenv('MINIO_ENDPOINT')
-MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY')
-MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY')
-MINIO_USE_HTTPS = False
-MINIO_URL_EXPIRY_HOURS = timedelta(days=7)  # Default is 7 days (longest) if not defined
-MINIO_CONSISTENCY_CHECK_ON_START = False
-
-MINIO_PRIVATE_BUCKETS = [
-    'backend-dev-private',
-]
-MINIO_PUBLIC_BUCKETS = [
-    'backend-dev-public',
-]
-
-# STORAGES = {  # -- ADDED IN Django 5.1
-#     "default": {
-#         "BACKEND": "django_minio_backend.models.MinioBackend",
-#     },
-#     "staticfiles": {  # -- OPTIONAL
-#         "BACKEND": "django_minio_backend.models.MinioBackendStatic",
-#     },
-# }
-MINIO_MEDIA_FILES_BUCKET = 'media'  # replacement for MEDIA_ROOT
-MINIO_STATIC_FILES_BUCKET = 'static'  # replacement for STATIC_ROOT
-MINIO_PUBLIC_BUCKETS.append(MINIO_STATIC_FILES_BUCKET)
-MINIO_PRIVATE_BUCKETS.append(MINIO_MEDIA_FILES_BUCKET)
-MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
-
-# _______________________________END_______________________________#
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -181,15 +147,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'My Project API',
-    'DESCRIPTION': 'Your project description',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'SWAGGER_UI_SETTINGS': {
-        'defaultModelsExpandDepth': -1,  # Hides the "Schemas" section
-    },
-}
 
 CACHES = {
     "default": {
@@ -219,6 +176,11 @@ EMAIL_SSL_KEYFILE = None
 
 CELERY_BROKER_URL = os.getenv('REDIS_LOCATION')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_LOCATION')
+
+
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URI = "http://localhost:8000/auth/oauth2/callback"
 
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
@@ -454,3 +416,5 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
+
+

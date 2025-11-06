@@ -47,83 +47,35 @@ class User(AbstractUser, PermissionsMixin, UUIDBaseModel):
 
 class Interpreter(User, CreatedBaseModel):
     """Основная модель переводчика"""
-
     class GenderType(TextChoices):
         MALE = 'male', 'Male'
         FEMALE = 'female', 'Female'
 
-    class LangLevel(TextChoices):
-        BEGINNER = 'beginner', 'Beginner'
-        INTERMEDIATE = 'intermediate', 'Intermediate'
-        ADVANCED = 'advanced', 'Advanced'
-        NATIVE = 'native', 'Native'
+    class TranslationType(TextChoices):
+        SIMULTANEOUS = 'simultaneous', _('Simultaneous')
+        CONSECUTIVE = 'consecutive', _('Consecutive')
+        WRITTEN = 'written', _('Written')
 
     gender = CharField(_("Пол"), max_length=6, choices=GenderType.choices)
-    language_level = CharField(max_length=20, choices=LangLevel.choices, default=LangLevel.BEGINNER)
-    experience = TextField()
     is_ready_for_trips = BooleanField(default=False)
-    hourly_rate = DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    translation_type = CharField(max_length=20, choices=TranslationType.choices)
+    is_moderated = BooleanField(_('Passed moderation'), default=False)
 
-    # translation_type = ManyToManyField('apps.TranslationType')
+    # Relations
     language = ManyToManyField('apps.Language')
     city = ForeignKey('apps.City', SET_NULL, null=True, related_name="translators")
-    specializations = ManyToManyField('apps.Specialization', related_name='translators')
+
+    class Meta:
+        verbose_name = _('Переводчик')
+        verbose_name_plural = _('Переводчики')
 
 
 class Client(User):
     """Модель клиента (физическое или юридическое лицо)"""
 
-    class ClientType(TextChoices):
-        INDIVIDUAL = 'individual', _('Физическое лицо')
-        LEGAL = 'legal', _('Юридическое лицо')
-
-    client_type = CharField(_('Тип клиента'), max_length=20, choices=ClientType.choices, default=ClientType.INDIVIDUAL)
-    company_name = CharField(_('Название компании'), max_length=255, blank=True)
-    tax_id = CharField(_('ИНН'), max_length=50, blank=True, unique=True, null=True)
-    legal_address = TextField(_('Юридический адрес'), blank=True)
-
     class Meta:
-        verbose_name = _('Клиент')
-        verbose_name_plural = _('Клиенты')
-
-    @property
-    def is_individual(self):
-        return self.client_type == self.ClientType.INDIVIDUAL
+        verbose_name = _('Client')
+        verbose_name_plural = _('Clients')
 
     def __str__(self):
-        if self.is_individual:
-            return f"{self.first_name} {self.last_name}".strip() or self.email
-        else:
-            return self.company_name or self.email
-
-    def clean(self):
-        """Валидация в зависимости от типа клиента"""
-        from django.core.exceptions import ValidationError
-
-        if self.client_type == self.ClientType.INDIVIDUAL:
-            if not self.first_name or not self.last_name:
-                raise ValidationError({
-                    'first_name': 'Для физического лица обязательно имя',
-                    'last_name': 'Для физического лица обязательна фамилия'
-                })
-
-        elif self.client_type == self.ClientType.LEGAL:
-            if not self.company_name:
-                raise ValidationError({
-                    'company_name': 'Для юридического лица обязательно название компании'
-                })
-            if not self.tax_id:
-                raise ValidationError({
-                    'tax_id': 'Для юридического лица обязателен ИНН/Tax ID'
-                })
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
-
-    @property
-    def display_name(self):
-        """Удобное отображение имени клиента"""
-        if self.client_type == self.ClientType.INDIVIDUAL:
-            return f"{self.first_name} {self.last_name}"
-        return self.company_name
+        return self.email

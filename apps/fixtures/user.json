@@ -1,0 +1,202 @@
+[
+  {
+    "model": "user.user",
+    "pk": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt1$hashvalue1==",
+      "last_login": "2025-10-20T14:23:45Z",
+      "is_superuser": false,
+      "first_name": "Алексей",
+      "last_name": "Смирнов",
+      "email": "alexey.smirnov@example.com",
+      "username": "alexey_dev",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-09-15",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt2$hashvalue2==",
+      "last_login": "2025-10-21T09:15:30Z",
+      "is_superuser": false,
+      "first_name": "Мария",
+      "last_name": "Петрова",
+      "email": "maria.petrova@example.com",
+      "username": "maria_code",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-08-10",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt3$hashvalue3==",
+      "last_login": "2025-10-19T16:42:11Z",
+      "is_superuser": false,
+      "first_name": "Дмитрий",
+      "last_name": "Иванов",
+      "email": "dmitry.ivanov@example.com",
+      "username": "dmitry_python",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-07-22",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt4$hashvalue4==",
+      "last_login": "2025-10-22T07:30:20Z",
+      "is_superuser": false,
+      "first_name": "Елена",
+      "last_name": "Козлова",
+      "email": "elena.kozlova@example.com",
+      "username": "elena_webdev",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-09-01",
+      "is_verified": false,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt5$hashvalue5==",
+      "last_login": "2025-10-18T11:20:55Z",
+      "is_superuser": false,
+      "first_name": "Сергей",
+      "last_name": "Волков",
+      "email": "sergey.volkov@example.com",
+      "username": "sergey_django",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-06-30",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt6$hashvalue6==",
+      "last_login": "2025-10-21T13:45:33Z",
+      "is_superuser": false,
+      "first_name": "Ольга",
+      "last_name": "Соколова",
+      "email": "olga.sokolova@example.com",
+      "username": "olga_fullstack",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-08-20",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt7$hashvalue7==",
+      "last_login": "2025-10-20T18:10:42Z",
+      "is_superuser": false,
+      "first_name": "Андрей",
+      "last_name": "Морозов",
+      "email": "andrey.morozov@example.com",
+      "username": "andrey_backend",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-07-05",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt8$hashvalue8==",
+      "last_login": "2025-10-19T10:25:17Z",
+      "is_superuser": false,
+      "first_name": "Татьяна",
+      "last_name": "Новикова",
+      "email": "tatyana.novikova@example.com",
+      "username": "tatyana_ml",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-09-10",
+      "is_verified": false,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt9$hashvalue9==",
+      "last_login": "2025-10-22T06:55:28Z",
+      "is_superuser": false,
+      "first_name": "Владимир",
+      "last_name": "Федоров",
+      "email": "vladimir.fedorov@example.com",
+      "username": "vladimir_data",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-08-01",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+    "fields": {
+      "password": "pbkdf2_sha256$600000$randomsalt10$hashvalue10==",
+      "last_login": "2025-10-21T15:30:50Z",
+      "is_superuser": false,
+      "first_name": "Анна",
+      "last_name": "Павлова",
+      "email": "anna.pavlova@example.com",
+      "username": "anna_frontend",
+      "type": "teacher",
+      "is_active": true,
+      "is_staff": false,
+      "created_at": "2025-09-05",
+      "is_verified": true,
+      "groups": [],
+      "user_permissions": [53, 54, 56]
+    }
+  }
+]
