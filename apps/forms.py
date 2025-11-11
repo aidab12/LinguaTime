@@ -2,19 +2,27 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UsernameField, UserCreationForm
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput
+from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple
 
 from apps.models import User, Interpreter
 
 
 class LoginForm(Form):
+    """
+    Форма для входа пользователей.
+    Использует email вместо username.
+    """
     email = UsernameField(required=True)
     password = CharField(max_length=128, required=True)
 
     def clean(self):
         cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+        password = cleaned_data.get('password')
 
-        user = authenticate(**cleaned_data)
+        try:
+            user =
+
         if user is None:
             raise ValidationError("Incorrect email or password")
 
@@ -54,6 +62,8 @@ class RegisterInterpreterModelForm(ModelForm):
         )
         widgets = {
             'password': PasswordInput(),
+            'language': CheckboxSelectMultiple(),
+            'translation_type': CheckboxSelectMultiple(),
         }
 
     def clean_first_name(self):
@@ -62,7 +72,7 @@ class RegisterInterpreterModelForm(ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if email and self.Meta.model.objects.filter(email=email).exist():
+        if email and self.Meta.model.objects.filter(email=email).exists():
             raise ValidationError("Email already exists")
         return email
 
@@ -79,6 +89,13 @@ class RegisterInterpreterModelForm(ModelForm):
 
         if password and confirm_password and password != confirm_password:
             raise ValidationError("Passwords don't match")
+
+        if not cleaned_data.get('language'):
+            raise ValidationError('Please select at least one language')
+
+        if self.instance._state.adding:
+            if not cleaned_data.get('translation_type'):
+                raise ValidationError('Plase select at least one translation type')
 
         return cleaned_data
 

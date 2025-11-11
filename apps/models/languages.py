@@ -16,3 +16,6 @@ class Language(UUIDBaseModel):
 
     def __str__(self):
         return self.name
+
+class TranslationType(UUIDBaseModel):
+    name = CharField(max_length=100, unique=True)

@@ -37,32 +37,28 @@ class User(AbstractUser, PermissionsMixin, UUIDBaseModel):
     REQUIRED_FIELDS = []
     objects = UserManager()
 
-    class Meta:
-        verbose_name = _('пользователь')
-        verbose_name_plural = _('пользователи')
-
     def __str__(self):
         return self.email
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
 
 
 class Interpreter(User, CreatedBaseModel):
     """Основная модель переводчика"""
+
     class GenderType(TextChoices):
         MALE = 'male', 'Male'
         FEMALE = 'female', 'Female'
 
-    class TranslationType(TextChoices):
-        SIMULTANEOUS = 'simultaneous', _('Simultaneous')
-        CONSECUTIVE = 'consecutive', _('Consecutive')
-        WRITTEN = 'written', _('Written')
-
-    gender = CharField(_("Пол"), max_length=6, choices=GenderType.choices)
+    gender = CharField(_("Gender"), max_length=6, choices=GenderType.choices)
     is_ready_for_trips = BooleanField(default=False)
-    translation_type = CharField(max_length=20, choices=TranslationType.choices)
     is_moderated = BooleanField(_('Passed moderation'), default=False)
 
     # Relations
-    language = ManyToManyField('apps.Language')
+    language = ManyToManyField('apps.Language', verbose_name=_("Languages"))
+    translation_type = ManyToManyField('apps.TranslationType', verbose_name=_("Translation Types"))
     city = ForeignKey('apps.City', SET_NULL, null=True, related_name="translators")
 
     class Meta:
@@ -71,7 +67,7 @@ class Interpreter(User, CreatedBaseModel):
 
 
 class Client(User):
-    """Модель клиента (физическое или юридическое лицо)"""
+    """Модель клиента"""
 
     class Meta:
         verbose_name = _('Client')

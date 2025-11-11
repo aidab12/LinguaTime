@@ -9,7 +9,7 @@ msg:
 
 # loaddata
 load:
-	python3 manage.py loaddata language
+	python3 manage.py loaddata country region city
 
 super:
 	python3 manage.py createsuperuser

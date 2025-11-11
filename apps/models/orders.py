@@ -15,10 +15,6 @@ class Order(CreatedBaseModel):
         ONSITE = 'onsite', _('Onsite')
         ONLINE = 'online', _('Online')
 
-    class TranslationType(TextChoices):
-        SIMULTANEOUS = 'simultaneous', _('Simultaneous')
-        CONSECUTIVE = 'consecutive', _('Consecutive')
-        WRITTEN = 'written', _('Written')
 
     class FormalityLevel(TextChoices):
         BUSINESS = 'business', _('Business')
@@ -54,7 +50,7 @@ class Order(CreatedBaseModel):
                       )
 
     address = TextField()
-    translation_type = CharField(max_length=20, choices=TranslationType.choices)
+    translation_types = ManyToManyField('apps.TranslationType', verbose_name=_("Translation Types"))
     interpreter_count = PositiveSmallIntegerField(default=1)
     languages = ManyToManyField('apps.Language', related_name='orders')
     formality_level = CharField(max_length=20, choices=FormalityLevel.choices, default=FormalityLevel.BUSINESS)
