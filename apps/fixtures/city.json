@@ -1,0 +1,122 @@
+[
+{
+  "model": "apps.city",
+  "pk": "0f7fac1a-bdca-4fbf-8291-ae979cb2e3b1",
+  "fields": {
+    "name": "Gijduvan",
+    "region": "df4b1bca-0a1d-41e1-913e-1f4530fa4da6"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "1c7a38ca-1f04-4c40-b75f-7465b8a05f55",
+  "fields": {
+    "name": "Tashkent",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "1e819aac-75ce-4b69-93ac-2a7d9bc8f387",
+  "fields": {
+    "name": "Bekabad",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "25a4e339-b507-4404-a6cd-ec983731da36",
+  "fields": {
+    "name": "Buka",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "39b8e200-8d15-4ef9-abb2-a65a95d44b7c",
+  "fields": {
+    "name": "Parkent",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "4a13471f-530f-4010-a140-595eea3213cd",
+  "fields": {
+    "name": "Yangiyul",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "966dca60-90b1-42d9-90d1-1289538c0d6a",
+  "fields": {
+    "name": "Gazalkent",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "967cf2a4-7020-4618-bf60-6e247571a519",
+  "fields": {
+    "name": "Gazli",
+    "region": "df4b1bca-0a1d-41e1-913e-1f4530fa4da6"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "9c459190-90a5-47a3-8caf-c07e27959857",
+  "fields": {
+    "name": "Karakul",
+    "region": "df4b1bca-0a1d-41e1-913e-1f4530fa4da6"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "a0f1a8bc-91b8-4b18-a9ae-c042f9d16ca0",
+  "fields": {
+    "name": "Bukhara",
+    "region": "df4b1bca-0a1d-41e1-913e-1f4530fa4da6"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "b6813b3a-a041-4af8-b0a6-e329d863864b",
+  "fields": {
+    "name": "Angren",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "cf417855-94d7-4040-95f5-539e436e3b5b",
+  "fields": {
+    "name": "Piskent",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "d9cd1ce0-c4bf-429d-922c-823403acd291",
+  "fields": {
+    "name": "Almalyk",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "e78c7a5f-8054-4eb5-80e3-f3a3720b3180",
+  "fields": {
+    "name": "Jandar",
+    "region": "df4b1bca-0a1d-41e1-913e-1f4530fa4da6"
+  }
+},
+{
+  "model": "apps.city",
+  "pk": "f6587245-2745-4205-bea0-5697bb8d48c4",
+  "fields": {
+    "name": "Nurafshan",
+    "region": "66c303d4-0d52-4874-9ace-e6ee7ed827e5"
+  }
+}
+]

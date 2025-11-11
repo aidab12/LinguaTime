@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UsernameField, UserCreationForm
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
-from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple
+from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple, EmailInput
 
 from apps.models import User, Interpreter
 
@@ -12,7 +12,7 @@ class LoginForm(Form):
     Форма для входа пользователей.
     Использует email вместо username.
     """
-    email = UsernameField(required=True)
+    email = EmailField(required=True, widget=EmailInput(attrs={'class': 'form-control','placeholder': 'your@email.com'}))
     password = CharField(max_length=128, required=True)
 
     def clean(self):

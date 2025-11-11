@@ -1,0 +1,34 @@
+[
+{
+  "model": "apps.region",
+  "pk": "66c303d4-0d52-4874-9ace-e6ee7ed827e5",
+  "fields": {
+    "name": "Tashkent",
+    "country": "5d7ecd26-501c-4eed-9044-ea1a0170929f"
+  }
+},
+{
+  "model": "apps.region",
+  "pk": "6e1b399a-a276-402f-aa3e-be8bc04ff434",
+  "fields": {
+    "name": "Fergana",
+    "country": "5d7ecd26-501c-4eed-9044-ea1a0170929f"
+  }
+},
+{
+  "model": "apps.region",
+  "pk": "774654ef-8749-432b-ace5-f63785215590",
+  "fields": {
+    "name": "Syrdarya",
+    "country": "5d7ecd26-501c-4eed-9044-ea1a0170929f"
+  }
+},
+{
+  "model": "apps.region",
+  "pk": "df4b1bca-0a1d-41e1-913e-1f4530fa4da6",
+  "fields": {
+    "name": "Bukhara",
+    "country": "5d7ecd26-501c-4eed-9044-ea1a0170929f"
+  }
+}
+]
