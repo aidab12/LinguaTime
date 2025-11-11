@@ -1,15 +1,13 @@
 import secrets
 import urllib.parse
-import requests
 
+import requests
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.contrib import messages
 from django.views.generic import CreateView, TemplateView
-from django_extensions.management.commands.export_emails import full_name
 
 from apps.forms import CustomClientCreationForm, RegisterInterpreterModelForm
 from apps.models import Interpreter, City, Language, Client
@@ -60,6 +58,7 @@ class RegisterInterpreterCreateView(CreateView):
     model = Interpreter
     form_class = RegisterInterpreterModelForm
     template_name = 'apps/auth/signup.html'
+    success_url = reverse_lazy('interpreter_signup')
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -67,14 +66,11 @@ class RegisterInterpreterCreateView(CreateView):
         ctx['languages'] = Language.objects.all()
         return ctx
 
-    # success_url = reverse_lazy('interpreter_dashboard')
-
     def form_valid(self, form):
         interpreter = form.save()
         login(self.request, interpreter)  # автоматически авторизовать после регистрации
         messages.success(self.request, "Account successfully created.")
-
-        return redirect(self.get_success_url())
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, "Please correct the errors below.")

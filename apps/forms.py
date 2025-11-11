@@ -20,8 +20,7 @@ class LoginForm(Form):
         email = cleaned_data.get('email')
         password = cleaned_data.get('password')
 
-        try:
-            user =
+        user = ''
 
         if user is None:
             raise ValidationError("Incorrect email or password")

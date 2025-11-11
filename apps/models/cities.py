@@ -2,7 +2,6 @@ from apps.models.base import UUIDBaseModel
 from django.db.models import CharField, ForeignKey, CASCADE
 
 
-
 class Country(UUIDBaseModel):
     name = CharField(max_length=155, unique=True)
 

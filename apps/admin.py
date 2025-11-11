@@ -1,11 +1,7 @@
 from django.contrib import admin
-from django.contrib.admin.options import InlineModelAdmin
 from django.contrib.admin.options import ModelAdmin
-from django.template.loader import get_template
 
-from apps.models import Interpreter, Client, Order, Booking, User
-from apps.models.cities import Country, Region, City
-from apps.models.reviews import Review
+from apps.models import Interpreter, Client, Order, Booking, User, Review, Country, Region, City
 
 
 @admin.register(Interpreter)

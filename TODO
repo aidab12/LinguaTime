@@ -1,6 +1,5 @@
 https://www.proz.com/
 
-Task
 1. oauth2 via google
 2. google calendar
 3. trigger when change google calendar
@@ -19,3 +18,12 @@ Task
 - is_ready_for_trips (checkbox)
 - translation_type = (simultaneous, consecutive, written)
 - языки (eng_ru, ru_uz, en_uz)
+
+
+
+TASK
+1. unique larni olib tashash
+2. admin va views ni bo'laklash
+3. login page larni togrilash
+4. logout ni qilish
+5. page larni bir biriga otadigan qilish (dashboard dagi)

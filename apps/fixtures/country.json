@@ -1,9 +1,9 @@
 [
-{
-  "model": "apps.country",
-  "pk": "5d7ecd26-501c-4eed-9044-ea1a0170929f",
-  "fields": {
-    "name": "Uzbekistan"
+  {
+    "model": "apps.country",
+    "pk": "5d7ecd26-501c-4eed-9044-ea1a0170929f",
+    "fields": {
+      "name": "Uzbekistan"
+    }
   }
-}
 ]
