@@ -1,0 +1,592 @@
+
+* {
+
+margin: 0;
+
+padding: 0;
+
+box-sizing: border-box;
+
+}
+
+
+
+body {
+
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+min-height: 100vh;
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+padding: 20px;
+
+}
+
+
+
+.auth-container {
+
+width: 100%;
+
+max-width: 500px;
+
+}
+
+
+
+.auth-box {
+
+background: white;
+
+border-radius: 10px;
+
+box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+overflow: hidden;
+
+}
+
+
+
+/* Toggle кнопки */
+
+.auth-toggle {
+
+display: flex;
+
+background: #f5f5f5;
+
+}
+
+
+
+.toggle-btn {
+
+flex: 1;
+
+padding: 15px;
+
+border: none;
+
+background: transparent;
+
+cursor: pointer;
+
+font-size: 16px;
+
+font-weight: 500;
+
+color: #666;
+
+transition: all 0.3s ease;
+
+}
+
+
+
+.toggle-btn.active {
+
+background: white;
+
+color: #667eea;
+
+border-bottom: 3px solid #667eea;
+
+}
+
+
+
+/* Формы */
+
+.auth-form {
+
+display: none;
+
+padding: 40px;
+
+animation: fadeIn 0.3s ease;
+
+}
+
+
+
+.auth-form.active {
+
+display: block;
+
+}
+
+
+
+@keyframes fadeIn {
+
+from {
+
+opacity: 0;
+
+transform: translateY(10px);
+
+}
+
+to {
+
+opacity: 1;
+
+transform: translateY(0);
+
+}
+
+}
+
+
+
+.auth-form h2 {
+
+margin-bottom: 30px;
+
+color: #333;
+
+font-size: 24px;
+
+text-align: center;
+
+}
+
+
+
+/* Выбор Role */
+
+.role-toggle {
+
+margin-bottom: 25px;
+
+}
+
+
+
+.role-toggle label {
+
+display: block;
+
+margin-bottom: 10px;
+
+font-weight: 500;
+
+color: #333;
+
+}
+
+
+
+.role-buttons {
+
+display: flex;
+
+gap: 10px;
+
+}
+
+
+
+.role-btn {
+
+flex: 1;
+
+padding: 12px;
+
+border: 2px solid #e0e0e0;
+
+background: white;
+
+border-radius: 5px;
+
+cursor: pointer;
+
+font-size: 14px;
+
+font-weight: 500;
+
+transition: all 0.3s ease;
+
+color: #666;
+
+}
+
+
+
+.role-btn.active {
+
+border-color: #667eea;
+
+background: #f0f4ff;
+
+color: #667eea;
+
+}
+
+
+
+.role-btn:hover {
+
+border-color: #667eea;
+
+}
+
+
+
+/* Form Groups */
+
+.form-group {
+
+margin-bottom: 20px;
+
+}
+
+
+
+.form-group label {
+
+display: block;
+
+margin-bottom: 8px;
+
+font-weight: 500;
+
+color: #333;
+
+font-size: 14px;
+
+}
+
+
+
+.form-group input,
+
+.form-group select {
+
+width: 100%;
+
+padding: 12px;
+
+border: 2px solid #e0e0e0;
+
+border-radius: 5px;
+
+font-size: 14px;
+
+transition: border-color 0.3s ease;
+
+}
+
+
+
+.form-group input:focus,
+
+.form-group select:focus {
+
+outline: none;
+
+border-color: #667eea;
+
+}
+
+
+
+.form-group input::placeholder {
+
+color: #999;
+
+}
+
+
+
+/* Radio и Checkbox группы */
+
+.radio-group,
+
+.checkbox-group {
+
+display: flex;
+
+flex-direction: column;
+
+gap: 10px;
+
+}
+
+
+
+.radio-label,
+
+.checkbox-label {
+
+display: flex;
+
+align-items: center;
+
+cursor: pointer;
+
+font-weight: 400;
+
+color: #555;
+
+}
+
+
+
+.radio-label input,
+
+.checkbox-label input {
+
+width: 18px;
+
+height: 18px;
+
+margin-right: 10px;
+
+cursor: pointer;
+
+}
+
+
+
+/* Скрытие полей интерпретатора */
+
+.interpreter-only {
+
+display: none;
+
+}
+
+
+
+.interpreter-only.show {
+
+display: block;
+
+}
+
+
+
+/* Кнопка отправки */
+
+.btn-submit {
+
+width: 100%;
+
+padding: 12px;
+
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+color: white;
+
+border: none;
+
+border-radius: 5px;
+
+font-size: 16px;
+
+font-weight: 600;
+
+cursor: pointer;
+
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+margin-top: 20px;
+
+}
+
+
+
+.btn-submit:hover {
+
+transform: translateY(-2px);
+
+box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+
+}
+
+
+
+.btn-submit:active {
+
+transform: translateY(0);
+
+}
+
+
+
+/* Divider */
+
+.divider {
+
+text-align: center;
+
+margin: 20px 0;
+
+color: #999;
+
+position: relative;
+
+}
+
+
+
+.divider::before,
+
+.divider::after {
+
+content: '';
+
+position: absolute;
+
+top: 50%;
+
+width: 45%;
+
+height: 1px;
+
+background: #e0e0e0;
+
+}
+
+
+
+.divider::before {
+
+left: 0;
+
+}
+
+
+
+.divider::after {
+
+right: 0;
+
+}
+
+
+
+/* Google Sign In Button */
+
+#g_id_onload,
+
+#g_id_onload_signup {
+
+display: flex;
+
+justify-content: center;
+
+margin-top: 10px;
+
+}
+
+
+
+.g_id_signin {
+
+display: flex;
+
+justify-content: center;
+
+}
+
+
+
+/* Адаптивность */
+
+@media (max-width: 600px) {
+
+.auth-box {
+
+border-radius: 0;
+
+}
+
+
+
+.auth-form {
+
+padding: 30px 20px;
+
+}
+
+
+
+.auth-form h2 {
+
+font-size: 20px;
+
+margin-bottom: 20px;
+
+}
+
+
+
+.form-group {
+
+margin-bottom: 15px;
+
+}
+
+
+
+.role-buttons {
+
+flex-direction: column;
+
+}
+
+
+
+.radio-group {
+
+flex-direction: row;
+
+gap: 20px;
+
+}
+
+}
+
+
+
+/* Сообщения об ошибках */
+
+.error-message {
+
+color: #e74c3c;
+
+font-size: 12px;
+
+margin-top: 5px;
+
+display: none;
+
+}
+
+
+
+.error-message.show {
+
+display: block;
+
+}
+
+
+
+input.error,
+
+select.error {
+
+border-color: #e74c3c !important;
+
+}

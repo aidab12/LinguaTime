@@ -62,8 +62,8 @@ class Interpreter(User, CreatedBaseModel):
     city = ForeignKey('apps.City', SET_NULL, null=True, related_name="translators")
 
     class Meta:
-        verbose_name = _('Переводчик')
-        verbose_name_plural = _('Переводчики')
+        verbose_name = _('Interpreter')
+        verbose_name_plural = _('Interpreters')
 
 
 class Client(User):

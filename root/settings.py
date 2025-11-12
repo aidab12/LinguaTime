@@ -123,7 +123,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'apps/static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Папка, где физически будут лежать файлы
 MEDIA_URL = "media/"  # Через какой URL их можно будет открыть

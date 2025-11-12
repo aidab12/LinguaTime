@@ -8,19 +8,34 @@ from apps.models import User, Interpreter
 
 
 class LoginForm(Form):
-    """
-    Форма для входа пользователей.
-    Использует email вместо username.
-    """
-    email = EmailField(required=True, widget=EmailInput(attrs={'class': 'form-control','placeholder': 'your@email.com'}))
-    password = CharField(max_length=128, required=True)
+    """Форма для входа пользователей."""
+    email = EmailField(
+        required=True,
+        widget=EmailInput(attrs={'class': 'form-control', 'placeholder': 'your@email.com'}),
+        error_messages={
+            'required': 'Email address is required.',
+            'invalid': 'Please enter a valid email address'
+        }
+    )
+    password = CharField(
+        max_length=128,
+        required=True,
+        widget=PasswordInput(attrs={
+            'placeholder': 'Enter your password',
+            'autocomplete': 'current-password'
+        }),
+        error_messages={
+            'required': 'Password is required'
+        }
+    )
 
     def clean(self):
         cleaned_data = super().clean()
         email = cleaned_data.get('email')
         password = cleaned_data.get('password')
 
-        user = ''
+        if not email or not password:
+            return cleaned_data
 
         if user is None:
             raise ValidationError("Incorrect email or password")
@@ -98,7 +113,7 @@ class RegisterInterpreterModelForm(ModelForm):
 
         return cleaned_data
 
-    def save(self, commit = True):
+    def save(self, commit=True):
         interpreter = super().save(commit=False)
         password = self.cleaned_data.get('password')
 

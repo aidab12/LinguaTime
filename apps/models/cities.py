@@ -3,14 +3,14 @@ from django.db.models import CharField, ForeignKey, CASCADE
 
 
 class Country(UUIDBaseModel):
-    name = CharField(max_length=155, unique=True)
+    name = CharField(max_length=155)
 
     def __str__(self):
         return self.name
 
 
 class Region(UUIDBaseModel):
-    name = CharField(max_length=155, unique=True)
+    name = CharField(max_length=155)
     country = ForeignKey(Country, CASCADE, related_name='regions')
 
     def __str__(self):

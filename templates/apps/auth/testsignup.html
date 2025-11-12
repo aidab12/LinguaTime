@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Authentication</title>
+
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</head>
+
+<body>
+
+<div class="auth-container">
+
+    <div class="auth-box">
+
+        <!-- Переключатель между Login и Register -->
+
+        <div class="auth-toggle">
+
+            <button class="toggle-btn active" data-mode="login">Sign In</button>
+
+            <button class="toggle-btn" data-mode="register">Sign Up</button>
+
+        </div>
+
+
+        <!-- Форма входа -->
+
+        <form id="loginForm" class="auth-form active">
+
+            <h2>Welcome Back</h2>
+
+            <div class="form-group">
+
+                <label for="loginEmail">Email *</label>
+
+                <input type="email" id="loginEmail" name="email" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="loginPassword">Password *</label>
+
+                <input type="password" id="loginPassword" name="password" required>
+
+            </div>
+
+
+            <button type="submit" class="btn-submit">Sign In</button>
+
+
+            <div class="divider">or</div>
+
+
+            <!-- Google Sign In -->
+
+            <div id="g_id_onload"
+
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
+
+                 data-callback="handleGoogleLogin">
+
+            </div>
+
+            <div class="g_id_signin" data-type="standard"></div>
+
+        </form>
+
+
+        <!-- Форма регистрации -->
+
+        <form id="registerForm" class="auth-form">
+
+            <h2>Create Account</h2>
+
+
+            <!-- Переключатель Role -->
+
+            <div class="role-toggle">
+
+                <label>Account Type *</label>
+
+                <div class="role-buttons">
+
+                    <button type="button" class="role-btn active" data-role="client">
+
+                        Client
+
+                    </button>
+
+                    <button type="button" class="role-btn" data-role="interpreter">
+
+                        Interpreter
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Общие поля -->
+
+            <div class="form-group">
+
+                <label for="firstName">First Name *</label>
+
+                <input type="text" id="firstName" name="first_name" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="lastName">Last Name *</label>
+
+                <input type="text" id="lastName" name="last_name" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="phone">Phone *</label>
+
+                <input type="tel" id="phone" name="phone" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="email">Email *</label>
+
+                <input type="email" id="email" name="email" required>
+
+            </div>
+
+
+            <!-- Поля для Interpreter -->
+
+            <div class="form-group interpreter-only">
+
+                <label for="gender">Gender *</label>
+
+                <select id="gender" name="gender">
+
+                    <option value="">Select Gender</option>
+
+                    <option value="male">Male</option>
+
+                    <option value="female">Female</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group interpreter-only">
+
+                <label for="city">City *</label>
+
+                <select id="city" name="city">
+
+                    <option value="Tashkent">Tashkent</option>
+
+                    <option value="Samarkand">Samarkand</option>
+
+                    <option value="Bukhara">Bukhara</option>
+
+                    <option value="Khiva">Khiva</option>
+
+                    <option value="Urgench">Urgench</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group interpreter-only">
+
+                <label for="readyTrips">Ready for Trips *</label>
+
+                <div class="radio-group">
+
+                    <label class="radio-label">
+
+                        <input type="radio" name="ready_for_trips" value="true"> Yes
+
+                    </label>
+
+                    <label class="radio-label">
+
+                        <input type="radio" name="ready_for_trips" value="false"> No
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group interpreter-only">
+
+                <label for="languages">Languages *</label>
+
+                <div class="checkbox-group">
+
+                    <label class="checkbox-label">
+
+                        <input type="checkbox" name="languages" value="eng_ru"> English - Russian
+
+                    </label>
+
+                    <label class="checkbox-label">
+
+                        <input type="checkbox" name="languages" value="ru_uz"> Russian - Uzbek
+
+                    </label>
+
+                    <label class="checkbox-label">
+
+                        <input type="checkbox" name="languages" value="en_uz"> English - Uzbek
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group interpreter-only">
+
+                <label for="translationType">Translation Types *</label>
+
+                <div class="checkbox-group">
+
+                    <label class="checkbox-label">
+
+                        <input type="checkbox" name="translation_type" value="simultaneous"> Simultaneous
+
+                    </label>
+
+                    <label class="checkbox-label">
+
+                        <input type="checkbox" name="translation_type" value="consecutive"> Consecutive
+
+                    </label>
+
+                    <label class="checkbox-label">
+
+                        <input type="checkbox" name="translation_type" value="written"> Written
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- Пароли -->
+
+            <div class="form-group">
+
+                <label for="password">Password *</label>
+
+                <input type="password" id="password" name="password" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="confirmPassword">Confirm Password *</label>
+
+                <input type="password" id="confirmPassword" name="confirm_password" required>
+
+            </div>
+
+
+            <button type="submit" class="btn-submit">Create Account</button>
+
+
+            <div class="divider">or</div>
+
+
+            <!-- Google Sign Up -->
+
+            <div id="g_id_onload_signup"
+
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
+
+                 data-callback="handleGoogleRegister">
+
+            </div>
+
+            <div class="g_id_signin" data-type="standard"></div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script src="{% static 'js/auth.js' %}"></script>
+
+</body>
+
+</html>
