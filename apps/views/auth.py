@@ -9,12 +9,15 @@ from apps.models import Interpreter, City, Language, Client
 from apps.views.mixins import LoginNotRequiredMixin
 
 
-class LoginClientView(LoginNotRequiredMixin, FormView):
+class LoginView(LoginNotRequiredMixin, FormView):
     template_name = 'apps/auth/login.html'
     form_class = LoginForm
     redirect_authenticated_user = True
     success_url = ''
 
+    def form_valid(self, form):
+        login(self.request, form.user)
+        return super().form_valid(form)
 
 class RegisterCreateView(CreateView):
     """Регистрация обычных клиентов"""

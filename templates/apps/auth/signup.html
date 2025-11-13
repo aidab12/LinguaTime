@@ -22,7 +22,7 @@
             </button>
         </div>
 
-        <form id="registration-form" method="post" action="">
+        <form id="registration-form" method="post" action="{% url 'interpreter_signup' %}">
             {% csrf_token %}
             <div class="form-field">
                 <label for="first-name">First Name<span class="required">*</span></label>

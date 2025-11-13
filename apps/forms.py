@@ -1,10 +1,9 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UsernameField, UserCreationForm
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.forms import UsernameField
 from django.core.exceptions import ValidationError
 from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple, EmailInput
 
-from apps.models import User, Interpreter, Client
+from apps.models import Interpreter, Client
 
 
 class LoginForm(Form):

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход</title>
+    <title>Login</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
@@ -27,10 +27,18 @@
             </div>
         {% endif %}
 
-        <form method="post">
+        <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
 
-            <!-- ИЗМЕНЕНИЕ: заменил form-group на form-field -->
+            <!-- Переключатель типа пользователя -->
+            <div class="form-field">
+                <label style="display: block; margin-bottom: 10px; font-weight: 500;">Login as:</label>
+                <div class="toggle-container">
+                    <button type="button" class="toggle-button active" data-type="client">Client</button>
+                    <button type="button" class="toggle-button" data-type="interpreter">Interpreter</button>
+                </div>
+            </div>
+
             <div class="form-field">
                 <label for="email">Email</label>
                 <input type="text" name="email" id="email" required>
@@ -72,6 +80,35 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.toggle-button');
+    const hiddenInput = document.getElementById('user_type');
+    const signupLink = document.getElementById('signup-link');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            // Update hidden input value
+            hiddenInput.value = this.dataset.type;
+
+            // Update signup link based on user type
+            if (this.dataset.type === 'interpreter') {
+                signupLink.href = "{% url 'interpreter_signup' %}";
+                signupLink.textContent = "Sign up as Interpreter";
+            } else {
+                signupLink.href = "{% url 'client_signup' %}";
+                signupLink.textContent = "Sign up";
+            }
+        });
+    });
+});
+</script>
+
 
 <script src="{% static 'js/auth.js' %}"></script>
 </body>
