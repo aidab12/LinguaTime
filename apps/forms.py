@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.exceptions import ValidationError
 from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple, EmailInput
 
-from apps.models import User, Interpreter
+from apps.models import User, Interpreter, Client
 
 
 class LoginForm(Form):
@@ -37,6 +37,8 @@ class LoginForm(Form):
         if not email or not password:
             return cleaned_data
 
+        user = authenticate(username=email, password=password)
+
         if user is None:
             raise ValidationError("Incorrect email or password")
 
@@ -44,19 +46,59 @@ class LoginForm(Form):
         return cleaned_data
 
 
-class CustomClientCreationForm(UserCreationForm):
-    phone = CharField()
-    first_name = CharField()
-    last_name = CharField()
-    email = EmailField()
+class RegisterClientModelForm(ModelForm):
+    """Форма для регистрации клиентов"""
+    password = CharField(
+        max_length=128,
+        widget=PasswordInput(attrs={'placeholder': 'Enter password', 'autocomplete': 'new-password'}),
+        error_messages={'required': 'Password is required'}
+    )
+    confirm_password = CharField(
+        max_length=128,
+        widget=PasswordInput(attrs={'placeholder': 'Confirm password', 'autocomplete': 'new-password'}),
+        error_messages={'required': 'Please confirm your password'}
+    )
 
     class Meta:
-        model = User
-        fields = ('phone', 'first_name', 'last_name', 'email')
+        model = Client
+        fields = ('first_name', 'last_name', 'phone', 'email')
         field_classes = {"phone": UsernameField}
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and Client.objects.filter(email=email).exists():
+            raise ValidationError("Email already exists")
+        return email
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone and Client.objects.filter(phone=phone).exists():
+            raise ValidationError("Phone already exists")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        if password and confirm_password and password != confirm_password:
+            raise ValidationError("Passwords don't match")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data.get('password')
+
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+        return user
 
 
 class RegisterInterpreterModelForm(ModelForm):
+    """Форма для регистрации переводчиков"""
+    password = CharField(max_length=128,widget=PasswordInput())
     confirm_password = CharField(max_length=128, widget=PasswordInput())
 
     class Meta:
@@ -79,10 +121,6 @@ class RegisterInterpreterModelForm(ModelForm):
             'language': CheckboxSelectMultiple(),
             'translation_type': CheckboxSelectMultiple(),
         }
-
-    def clean_first_name(self):
-        first_name = self.cleaned_data.get('first_name')
-        return first_name.title()
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -118,7 +156,7 @@ class RegisterInterpreterModelForm(ModelForm):
         password = self.cleaned_data.get('password')
 
         if password:
-            interpreter.password = make_password(password)
+            interpreter.set_password(password)
         if commit:
             interpreter.save()
             self.save_m2m()

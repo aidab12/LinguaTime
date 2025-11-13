@@ -1,706 +1,394 @@
-
-class AuthManager {
-
-constructor() {
-
-this.currentRole = 'client';
-
-this.currentMode = 'login';
-
-this.init();
-
-}
-
-
-
-init() {
-
-this.setupEventListeners();
-
-this.updateFormVisibility();
-
-}
-
-
-
-setupEventListeners() {
-
-// Переключение между Login и Register
-
-document.querySelectorAll('.toggle-btn').forEach(btn => {
-
-btn.addEventListener('click', (e) => {
-
-this.switchMode(e.target.dataset.mode);
-
-});
-
-});
-
-
-
-// Переключение Role (Client/Interpreter)
-
-document.querySelectorAll('.role-btn').forEach(btn => {
-
-btn.addEventListener('click', (e) => {
-
-e.preventDefault();
-
-this.switchRole(e.target.dataset.role);
-
-});
-
-});
-
-
-
-// Отправка форм
-
-document.getElementById('loginForm').addEventListener('submit', (e) => {
-
-e.preventDefault();
-
-this.handleLogin();
-
-});
-
-
-
-document.getElementById('registerForm').addEventListener('submit', (e) => {
-
-e.preventDefault();
-
-this.handleRegister();
-
-});
-
-}
-
-
-
-switchMode(mode) {
-
-this.currentMode = mode;
-
-
-
-// Обновление активной кнопки
-
-document.querySelectorAll('.toggle-btn').forEach(btn => {
-
-btn.classList.toggle('active', btn.dataset.mode === mode);
-
-});
-
-
-
-// Показ/скрытие форм
-
-document.querySelectorAll('.auth-form').forEach(form => {
-
-form.classList.toggle('active', form.id === `${mode}Form`);
-
-});
-
-}
-
-
-
-switchRole(role) {
-
-this.currentRole = role;
-
-
-
-// Обновление активной кнопки
-
-document.querySelectorAll('.role-btn').forEach(btn => {
-
-btn.classList.toggle('active', btn.dataset.role === role);
-
-});
-
-
-
-this.updateFormVisibility();
-
-}
-
-
-
-updateFormVisibility() {
-
-const interpreterFields = document.querySelectorAll('.interpreter-only');
-
-
-
-interpreterFields.forEach(field => {
-
-if (this.currentRole === 'interpreter') {
-
-field.classList.add('show');
-
-// Делаем поля обязательными
-
-const inputs = field.querySelectorAll('input, select');
-
-inputs.forEach(input => {
-
-input.required = true;
-
-});
-
-} else {
-
-field.classList.remove('show');
-
-// Убираем required для клиента
-
-const inputs = field.querySelectorAll('input, select');
-
-inputs.forEach(input => {
-
-input.required = false;
-
-});
-
-}
-
-});
-
-}
-
-
-
-validateEmail(email) {
-
-const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-return regex.test(email);
-
-}
-
-
-
-validatePassword(password) {
-
-return password.length >= 8;
-
-}
-
-
-
-validatePhone(phone) {
-
-const regex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
-
-return regex.test(phone.replace(/\s/g, ''));
-
-}
-
-
-
-validateLogin() {
-
-const email = document.getElementById('loginEmail').value.trim();
-
-const password = document.getElementById('loginPassword').value;
-
-
-
-if (!this.validateEmail(email)) {
-
-this.showError('loginEmail', 'Invalid email address');
-
-return false;
-
-}
-
-
-
-if (!password) {
-
-this.showError('loginPassword', 'Password is required');
-
-return false;
-
-}
-
-
-
-this.clearErrors();
-
-return true;
-
-}
-
-
-
-validateRegister() {
-
-const firstName = document.getElementById('firstName').value.trim();
-
-const lastName = document.getElementById('lastName').value.trim();
-
-const phone = document.getElementById('phone').value.trim();
-
-const email = document.getElementById('email').value.trim();
-
-const password = document.getElementById('password').value;
-
-const confirmPassword = document.getElementById('confirmPassword').value;
-
-
-
-this.clearErrors();
-
-
-
-if (!firstName) {
-
-this.showError('firstName', 'First name is required');
-
-return false;
-
-}
-
-
-
-if (!lastName) {
-
-this.showError('lastName', 'Last name is required');
-
-return false;
-
-}
-
-
-
-if (!phone || !this.validatePhone(phone)) {
-
-this.showError('phone', 'Invalid phone number');
-
-return false;
-
-}
-
-
-
-if (!this.validateEmail(email)) {
-
-this.showError('email', 'Invalid email address');
-
-return false;
-
-}
-
-
-
-if (!this.validatePassword(password)) {
-
-this.showError('password', 'Password must be at least 8 characters');
-
-return false;
-
-}
-
-
-
-if (password !== confirmPassword) {
-
-this.showError('confirmPassword', 'Passwords do not match');
-
-return false;
-
-}
-
-
-
-// Валидация специфичных полей интерпретатора
-
-if (this.currentRole === 'interpreter') {
-
-const gender = document.getElementById('gender').value;
-
-const languages = document.querySelectorAll('input[name="languages"]:checked');
-
-const translationType = document.querySelectorAll('input[name="translation_type"]:checked');
-
-
-
-if (!gender) {
-
-this.showError('gender', 'Gender is required');
-
-return false;
-
-}
-
-
-
-if (languages.length === 0) {
-
-this.showError('languages', 'Select at least one language');
-
-return false;
-
-}
-
-
-
-if (translationType.length === 0) {
-
-this.showError('translationType', 'Select at least one translation type');
-
-return false;
-
-}
-
-}
-
-
-
-return true;
-
-}
-
-
-
-showError(fieldId, message) {
-
-const field = document.getElementById(fieldId);
-
-if (field) {
-
-field.classList.add('error');
-
-const errorMsg = field.parentElement.querySelector('.error-message');
-
-if (errorMsg) {
-
-errorMsg.textContent = message;
-
-errorMsg.classList.add('show');
-
-} else {
-
-const error = document.createElement('div');
-
-error.className = 'error-message show';
-
-error.textContent = message;
-
-field.parentElement.appendChild(error);
-
-}
-
-}
-
-}
-
-
-
-clearErrors() {
-
-document.querySelectorAll('.error').forEach(field => {
-
-field.classList.remove('error');
-
-});
-
-document.querySelectorAll('.error-message').forEach(msg => {
-
-msg.classList.remove('show');
-
-});
-
-}
-
-
-
-async handleLogin() {
-
-if (!this.validateLogin()) return;
-
-
-
-const formData = new FormData(document.getElementById('loginForm'));
-
-const data = Object.fromEntries(formData);
-
-
-
-try {
-
-const response = await fetch('/api/login/', {
-
-method: 'POST',
-
-headers: {
-
-'Content-Type': 'application/json',
-
-'X-CSRFToken': this.getCSRFToken(),
-
-},
-
-body: JSON.stringify(data),
-
-});
-
-
-
-const result = await response.json();
-
-
-
-if (response.ok) {
-
-window.location.href = '/dashboard/';
-
-} else {
-
-alert(result.error || 'Login failed');
-
-}
-
-} catch (error) {
-
-console.error('Login error:', error);
-
-alert('An error occurred. Please try again.');
-
-}
-
-}
-
-
-
-async handleRegister() {
-
-if (!this.validateRegister()) return;
-
-
-
-const formData = new FormData(document.getElementById('registerForm'));
-
-const data = {
-
-first_name: formData.get('first_name'),
-
-last_name: formData.get('last_name'),
-
-phone: formData.get('phone'),
-
-email: formData.get('email'),
-
-password: formData.get('password'),
-
-user_type: this.currentRole,
-
+const defaultConfig = {
+    form_title: "Registration Form",
+    client_label: "Client",
+    interpreter_label: "Interpreter",
+    google_button_text: "Continue with Google",
+    background_color: "#667eea",
+    surface_color: "#ffffff",
+    text_color: "#1f2937",
+    primary_action_color: "#667eea",
+    secondary_action_color: "#e5e7eb",
+    font_family: "Inter",
+    font_size: 16
 };
 
+let config = {...defaultConfig};
+let currentUserType = 'client';
 
+const clientToggle = document.getElementById('client-toggle');
+const interpreterToggle = document.getElementById('interpreter-toggle');
+const interpreterFields = document.getElementById('interpreter-fields');
+const form = document.getElementById('registration-form');
+const successMessage = document.getElementById('success-message');
+const googleRegisterBtn = document.getElementById('google-register');
 
-// Добавляем специфичные поля интерпретатора
+function switchUserType(type) {
+    currentUserType = type;
 
-if (this.currentRole === 'interpreter') {
+    // Динамически меняем action формы
+    if (type === 'client') {
+        form.action = "/auth/client-signup/"; // Замените на ваш URL
 
-data.gender = formData.get('gender');
+        clientToggle.classList.add('active');
+        interpreterToggle.classList.remove('active');
+        interpreterFields.classList.add('hidden');
 
-data.city = formData.get('city');
+        clientToggle.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+        clientToggle.style.borderColor = config.primary_action_color || defaultConfig.primary_action_color;
+        clientToggle.style.color = 'white';
 
-data.ready_for_trips = formData.get('ready_for_trips') === 'true';
+        interpreterToggle.style.background = 'white';
+        interpreterToggle.style.borderColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        interpreterToggle.style.color = '#6b7280';
 
-data.languages = Array.from(document.querySelectorAll('input[name="languages"]:checked'))
+        const interpreterInputs = interpreterFields.querySelectorAll('input, select');
+        interpreterInputs.forEach(input => {
+            input.removeAttribute('required');
+        });
+    } else {
+        form.action = "/auth/interpreter-signup/"; // Замените на ваш URL
 
-.map(checkbox => checkbox.value);
+        interpreterToggle.classList.add('active');
+        clientToggle.classList.remove('active');
+        interpreterFields.classList.remove('hidden');
 
-data.translation_type = Array.from(document.querySelectorAll('input[name="translation_type"]:checked'))
+        interpreterToggle.style.background = config.primary_action_color || defaultConfig.primary_action_color;
+        interpreterToggle.style.borderColor = config.primary_action_color || defaultConfig.primary_action_color;
+        interpreterToggle.style.color = 'white';
 
-.map(checkbox => checkbox.value);
+        clientToggle.style.background = 'white';
+        clientToggle.style.borderColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        clientToggle.style.color = '#6b7280';
 
+        const genderSelect = document.getElementById('gender');
+        const citySelect = document.getElementById('city');
+        if (genderSelect) genderSelect.setAttribute('required', 'required');
+        if (citySelect) citySelect.setAttribute('required', 'required');
+    }
+
+    console.log('🔄 User type switched to:', type);
+    console.log('📍 Form will submit to:', form.action);
 }
 
+// Инициализация событий
+if (clientToggle && interpreterToggle) {
+    clientToggle.addEventListener('click', () => switchUserType('client'));
+    interpreterToggle.addEventListener('click', () => switchUserType('interpreter'));
+    
+    // Устанавливаем начальное состояние
+    switchUserType('client');
+}
 
-
-try {
-
-const response = await fetch('/api/register/', {
-
-method: 'POST',
-
-headers: {
-
-'Content-Type': 'application/json',
-
-'X-CSRFToken': this.getCSRFToken(),
-
-},
-
-body: JSON.stringify(data),
-
+// Multiselect опции
+const multiselectOptions = document.querySelectorAll('.multiselect-option');
+multiselectOptions.forEach(option => {
+    option.addEventListener('click', (e) => {
+        if (e.target.tagName !== 'INPUT') {
+            const checkbox = option.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+        }
+        option.classList.toggle('selected', option.querySelector('input[type="checkbox"]').checked);
+    });
 });
 
+// Валидация формы
+if (form) {
+    form.addEventListener('submit', (e) => {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
 
+        // Проверка совпадения паролей
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            showError('Passwords do not match!');
+            return;
+        }
 
-const result = await response.json();
+        // Проверка для переводчиков
+        if (currentUserType === 'interpreter') {
+            const languages = Array.from(document.querySelectorAll('#languages-list input:checked')).map(cb => cb.value);
+            const translationTypes = Array.from(document.querySelectorAll('#translation-type-list input:checked')).map(cb => cb.value);
 
+            if (languages.length === 0 || translationTypes.length === 0) {
+                e.preventDefault();
+                showError('Please select at least one language and translation type!');
+                return;
+            }
+        }
 
-
-if (response.ok) {
-
-alert('Registration successful! Please log in.');
-
-this.switchMode('login');
-
-} else {
-
-alert(result.error || 'Registration failed');
-
+        console.log('✅ Form is valid, submitting to:', form.action);
+    });
 }
 
-} catch (error) {
+// Функция для показа ошибок
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
 
-console.error('Registration error:', error);
+    const existingError = form.querySelector('.error-message');
+    if (existingError) existingError.remove();
 
-alert('An error occurred. Please try again.');
-
+    form.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 3000);
 }
 
+// Google OAuth
+if (googleRegisterBtn) {
+    googleRegisterBtn.addEventListener('click', () => {
+        showGoogleUserTypeModal();
+    });
 }
 
+function showGoogleUserTypeModal() {
+    const modalOverlay = document.createElement('div');
+    modalOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    `;
 
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    `;
 
-handleGoogleLogin(response) {
+    modalContent.innerHTML = `
+        <div style="margin-bottom: 1.5rem;">
+            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 700; color: #1f2937;">Continue with Google</h3>
+            <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">Select your account type</p>
+        </div>
 
-this.handleGoogleAuth(response, 'login');
+        <p style="margin-bottom: 1.5rem; color: #374151; font-weight: 600;">I want to register as:</p>
 
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+            <button id="modal-client-btn" style="flex: 1; padding: 1rem; border: 2px solid #667eea; background: #667eea; color: white; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                Client
+            </button>
+            <button id="modal-interpreter-btn" style="flex: 1; padding: 1rem; border: 2px solid #e5e7eb; background: white; color: #6b7280; border-radius: 0.5rem; font-weight: 600; cursor: pointer;">
+                Interpreter
+            </button>
+        </div>
+
+        <button id="continue-with-google" style="width: 100%; padding: 0.875rem; background: #10b981; color: white; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem;">
+            Continue with Google
+        </button>
+
+        <button id="cancel-google-registration" style="width: 100%; padding: 0.875rem; background: transparent; color: #6b7280; border: none; cursor: pointer; font-weight: 500;">
+            Cancel
+        </button>
+    `;
+
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+
+    let selectedType = 'client';
+
+    const modalClientBtn = modalContent.querySelector('#modal-client-btn');
+    const modalInterpreterBtn = modalContent.querySelector('#modal-interpreter-btn');
+    const continueBtn = modalContent.querySelector('#continue-with-google');
+    const cancelBtn = modalContent.querySelector('#cancel-google-registration');
+
+    function selectModalType(type) {
+        selectedType = type;
+        if (type === 'client') {
+            modalClientBtn.style.background = '#667eea';
+            modalClientBtn.style.borderColor = '#667eea';
+            modalClientBtn.style.color = 'white';
+            modalInterpreterBtn.style.background = 'white';
+            modalInterpreterBtn.style.borderColor = '#e5e7eb';
+            modalInterpreterBtn.style.color = '#6b7280';
+        } else {
+            modalInterpreterBtn.style.background = '#667eea';
+            modalInterpreterBtn.style.borderColor = '#667eea';
+            modalInterpreterBtn.style.color = 'white';
+            modalClientBtn.style.background = 'white';
+            modalClientBtn.style.borderColor = '#e5e7eb';
+            modalClientBtn.style.color = '#6b7280';
+        }
+    }
+
+    modalClientBtn.addEventListener('click', () => selectModalType('client'));
+    modalInterpreterBtn.addEventListener('click', () => selectModalType('interpreter'));
+
+    // Редирект на Google OAuth
+    continueBtn.addEventListener('click', () => {
+        continueBtn.textContent = 'Redirecting to Google...';
+        continueBtn.disabled = true;
+        continueBtn.style.opacity = '0.7';
+
+        // Редирект с типом пользователя
+        window.location.href = `/auth/google-login?user_type=${selectedType}`;
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        document.body.removeChild(modalOverlay);
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            document.body.removeChild(modalOverlay);
+        }
+    });
 }
 
+// Конфигурация (для SDK)
+async function onConfigChange(newConfig) {
+    const formTitle = document.getElementById('form-title');
+    const clientLabel = document.getElementById('client-label');
+    const interpreterLabel = document.getElementById('interpreter-label');
+    const container = document.querySelector('.form-container');
+    const formBox = container.querySelector('.form-box');
+    const submitButton = form.querySelector('.submit-button');
+    const labels = document.querySelectorAll('label');
 
+    const customFont = newConfig.font_family || defaultConfig.font_family;
+    const baseFontStack = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    const baseSize = newConfig.font_size || defaultConfig.font_size;
 
-handleGoogleRegister(response) {
+    if (formTitle) formTitle.textContent = newConfig.form_title || defaultConfig.form_title;
+    if (clientLabel) clientLabel.textContent = newConfig.client_label || defaultConfig.client_label;
+    if (interpreterLabel) interpreterLabel.textContent = newConfig.interpreter_label || defaultConfig.interpreter_label;
 
-this.handleGoogleAuth(response, 'register');
+    if (container) {
+        container.style.background = `linear-gradient(135deg, ${newConfig.background_color || defaultConfig.background_color} 0%, ${newConfig.primary_action_color || defaultConfig.primary_action_color} 100%)`;
+    }
+    if (formBox) formBox.style.background = newConfig.surface_color || defaultConfig.surface_color;
+    if (formTitle) formTitle.style.color = newConfig.text_color || defaultConfig.text_color;
 
+    labels.forEach(label => {
+        label.style.color = newConfig.text_color || defaultConfig.text_color;
+    });
+
+    if (submitButton) {
+        submitButton.style.background = `linear-gradient(135deg, ${newConfig.primary_action_color || defaultConfig.primary_action_color} 0%, ${newConfig.background_color || defaultConfig.background_color} 100%)`;
+    }
+
+    if (googleRegisterBtn) {
+        googleRegisterBtn.style.borderColor = newConfig.secondary_action_color || defaultConfig.secondary_action_color;
+        googleRegisterBtn.style.color = newConfig.text_color || defaultConfig.text_color;
+    }
+
+    if (currentUserType === 'client' && clientToggle && interpreterToggle) {
+        clientToggle.style.background = newConfig.primary_action_color || defaultConfig.primary_action_color;
+        clientToggle.style.borderColor = newConfig.primary_action_color || defaultConfig.primary_action_color;
+        interpreterToggle.style.borderColor = newConfig.secondary_action_color || defaultConfig.secondary_action_color;
+    } else if (interpreterToggle && clientToggle) {
+        interpreterToggle.style.background = newConfig.primary_action_color || defaultConfig.primary_action_color;
+        interpreterToggle.style.borderColor = newConfig.primary_action_color || defaultConfig.primary_action_color;
+        clientToggle.style.borderColor = newConfig.secondary_action_color || defaultConfig.secondary_action_color;
+    }
+
+    // Применение шрифтов
+    if (formTitle) {
+        formTitle.style.fontFamily = `${customFont}, ${baseFontStack}`;
+        formTitle.style.fontSize = `${baseSize * 2}px`;
+    }
+
+    if (clientLabel) clientLabel.style.fontFamily = `${customFont}, ${baseFontStack}`;
+    if (interpreterLabel) interpreterLabel.style.fontFamily = `${customFont}, ${baseFontStack}`;
+
+    labels.forEach(label => {
+        label.style.fontFamily = `${customFont}, ${baseFontStack}`;
+        label.style.fontSize = `${baseSize}px`;
+    });
+
+    if (submitButton) {
+        submitButton.style.fontFamily = `${customFont}, ${baseFontStack}`;
+        submitButton.style.fontSize = `${baseSize * 1.125}px`;
+    }
+
+    if (googleRegisterBtn) {
+        googleRegisterBtn.style.fontFamily = `${customFont}, ${baseFontStack}`;
+        googleRegisterBtn.style.fontSize = `${baseSize}px`;
+    }
+
+    const googleButtonText = document.getElementById('google-button-text');
+    if (googleButtonText) {
+        googleButtonText.textContent = newConfig.google_button_text || defaultConfig.google_button_text;
+    }
 }
 
-
-
-async handleGoogleAuth(response, mode) {
-
-try {
-
-const result = await fetch('/api/google-auth/', {
-
-method: 'POST',
-
-headers: {
-
-'Content-Type': 'application/json',
-
-'X-CSRFToken': this.getCSRFToken(),
-
-},
-
-body: JSON.stringify({
-
-token: response.credential,
-
-mode: mode,
-
-user_type: this.currentRole,
-
-}),
-
-});
-
-
-
-const data = await result.json();
-
-
-
-if (result.ok) {
-
-if (mode === 'register' && this.currentRole === 'interpreter') {
-
-// Перенаправляем на завершение профиля интерпретатора
-
-window.location.href = '/profile/complete/';
-
-} else {
-
-window.location.href = '/dashboard/';
-
+// Инициализация SDK
+if (window.elementSdk) {
+    window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+            config = {...config, ...newConfig};
+            await onConfigChange(config);
+        },
+        mapToCapabilities: (cfg) => ({
+            recolorables: [
+                {
+                    get: () => cfg.background_color || defaultConfig.background_color,
+                    set: (value) => {
+                        cfg.background_color = value;
+                        window.elementSdk.setConfig({background_color: value});
+                    }
+                },
+                {
+                    get: () => cfg.surface_color || defaultConfig.surface_color,
+                    set: (value) => {
+                        cfg.surface_color = value;
+                        window.elementSdk.setConfig({surface_color: value});
+                    }
+                },
+                {
+                    get: () => cfg.text_color || defaultConfig.text_color,
+                    set: (value) => {
+                        cfg.text_color = value;
+                        window.elementSdk.setConfig({text_color: value});
+                    }
+                },
+                {
+                    get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
+                    set: (value) => {
+                        cfg.primary_action_color = value;
+                        window.elementSdk.setConfig({primary_action_color: value});
+                    }
+                },
+                {
+                    get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
+                    set: (value) => {
+                        cfg.secondary_action_color = value;
+                        window.elementSdk.setConfig({secondary_action_color: value});
+                    }
+                }
+            ],
+            borderables: [],
+            fontEditable: {
+                get: () => cfg.font_family || defaultConfig.font_family,
+                set: (value) => {
+                    cfg.font_family = value;
+                    window.elementSdk.setConfig({font_family: value});
+                }
+            },
+            fontSizeable: {
+                get: () => cfg.font_size || defaultConfig.font_size,
+                set: (value) => {
+                    cfg.font_size = value;
+                    window.elementSdk.setConfig({font_size: value});
+                }
+            }
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+            ["form_title", cfg.form_title || defaultConfig.form_title],
+            ["client_label", cfg.client_label || defaultConfig.client_label],
+            ["interpreter_label", cfg.interpreter_label || defaultConfig.interpreter_label],
+            ["google_button_text", cfg.google_button_text || defaultConfig.google_button_text]
+        ])
+    });
 }
-
-} else {
-
-alert(data.error || 'Authentication failed');
-
-}
-
-} catch (error) {
-
-console.error('Google auth error:', error);
-
-alert('An error occurred. Please try again.');
-
-}
-
-}
-
-
-
-getCSRFToken() {
-
-return document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
-
-document.cookie.split('; ')
-
-.find(row => row.startsWith('csrftoken='))
-
-?.split('=')[1] ||
-
-'';
-
-}
-
-}
-
-
-
-// Инициализация
-
-document.addEventListener('DOMContentLoaded', () => {
-
-new AuthManager();
-
-});
-
-
-
-// Google callback функции
-
-function handleGoogleLogin(response) {
-
-window.authManager?.handleGoogleLogin(response);
-
-}
-
-
-
-function handleGoogleRegister(response) {
-
-window.authManager?.handleGoogleRegister(response);
-
-}
-
-
-
-// Сохраняем экземпляр в window для доступа из HTML
-
-window.authManager = new AuthManager();

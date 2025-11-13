@@ -2,37 +2,24 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, FormView
 
-from apps.forms import CustomClientCreationForm, RegisterInterpreterModelForm
+from apps.forms import RegisterClientModelForm, RegisterInterpreterModelForm, LoginForm
 from apps.models import Interpreter, City, Language, Client
+from apps.views.mixins import LoginNotRequiredMixin
 
 
-
-# class LoginAuthView(LoginView):
-#     template_name = 'apps/auth/login.html'
-#     next_page = reverse_lazy('')
-#     form_class = CustomAuthenticationForm
-#
-#     def form_valid(self, form):
-#         return super().form_valid(form)
-#
-#     def form_invalid(self, form):
-#         return super().form_invalid(form)
-
-
-# class LogoutPageView(View):
-#     success_url = reverse_lazy('product_list_view')
-#
-#     def get(self, request, *args, **kwargs):
-#         logout(request)
-#         return redirect(self.success_url)
+class LoginClientView(LoginNotRequiredMixin, FormView):
+    template_name = 'apps/auth/login.html'
+    form_class = LoginForm
+    redirect_authenticated_user = True
+    success_url = ''
 
 
 class RegisterCreateView(CreateView):
     """Регистрация обычных клиентов"""
     template_name = 'apps/auth/signup.html'
-    form_class = CustomClientCreationForm
+    form_class = RegisterClientModelForm
     success_url = reverse_lazy('client_profile')
 
     def get_context_data(self, **kwargs):
@@ -46,6 +33,10 @@ class RegisterCreateView(CreateView):
         login(self.request, client)
         messages.success(self.request, "Client account created successfully!")
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Please correct the errors below.")
+        return super().form_invalid(form)
 
 
 class RegisterInterpreterCreateView(CreateView):
