@@ -30,6 +30,9 @@
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
 
+            <!-- Скрытое поле для типа пользователя -->
+            <input type="hidden" name="user_type" id="user_type" value="client">
+
             <!-- Переключатель типа пользователя -->
             <div class="form-field">
                 <label style="display: block; margin-bottom: 10px; font-weight: 500;">Login as:</label>

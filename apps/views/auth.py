@@ -1,6 +1,8 @@
+from celery.worker.state import successful_requests
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, FormView
 
@@ -12,12 +14,16 @@ from apps.views.mixins import LoginNotRequiredMixin
 class LoginView(LoginNotRequiredMixin, FormView):
     template_name = 'apps/auth/login.html'
     form_class = LoginForm
+    success_url = reverse_lazy('client_profile')
     redirect_authenticated_user = True
-    success_url = ''
 
     def form_valid(self, form):
         login(self.request, form.user)
-        return super().form_valid(form)
+        user_type = form.cleaned_data['user_type']
+
+        if user_type == 'interpreter':
+            return redirect('interpreter_profile')
+        return redirect('client_profile')
 
 class RegisterCreateView(CreateView):
     """Регистрация обычных клиентов"""

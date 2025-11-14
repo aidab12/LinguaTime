@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UsernameField
-from django.core.exceptions import ValidationError
-from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple, EmailInput
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple, EmailInput, \
+    HiddenInput
 
 from apps.models import Interpreter, Client
 
@@ -27,19 +28,36 @@ class LoginForm(Form):
             'required': 'Password is required'
         }
     )
+    user_type = CharField(widget=HiddenInput())
+
 
     def clean(self):
         cleaned_data = super().clean()
         email = cleaned_data.get('email')
         password = cleaned_data.get('password')
+        user_type = cleaned_data.get('user_type')
 
         if not email or not password:
-            return cleaned_data
+            raise ValidationError("Email and password are required")
 
-        user = authenticate(username=email, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is None:
-            raise ValidationError("Incorrect email or password")
+            raise ValidationError("Invalid email or password")
+
+
+        if user_type == 'client':
+            try:
+                user.client
+            except ObjectDoesNotExist:
+                raise ValidationError("This account is not a client.")
+        elif user_type == 'interpreter':
+            try:
+                user.interpreter
+            except ObjectDoesNotExist:
+                raise ValidationError("This account is not an interpreter.")
+        else:
+            raise ValidationError("Unknown user type.")
 
         self.user = user
         return cleaned_data
