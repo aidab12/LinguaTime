@@ -1,14 +1,11 @@
 from django.urls import path
 
-from apps.views.auth import RegisterInterpreterCreateView, RegisterCreateView, LoginView
-from apps.views.oauth2 import google_login, google_callback
-from apps.views.profile import DashboardView, ProfileView, OrdersView, NewOrderView, BillingView, SettingsView
+from apps.views import RegisterInterpreterCreateView, RegisterCreateView, LoginView, google_login, google_callback, \
+    DashboardView, ProfileView, OrdersView, NewOrderView, BillingView, SettingsView
 from apps.views.views import TestAuthView
 
-app_name = 'apps'
-
 urlpatterns = [
-    path('login/', LoginView.as_view(), name='login'),
+    path('', LoginView.as_view(), name='login'),
     path('signup/', RegisterInterpreterCreateView.as_view(), name='interpreter_signup'),
     path('signup/client/', RegisterCreateView.as_view(), name='client_signup'),
 

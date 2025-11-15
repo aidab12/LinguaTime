@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
-from django.db.models import TextChoices, ForeignKey, PROTECT, DateTimeField, CharField, TextField, URLField, \
-    PositiveSmallIntegerField, ManyToManyField, BooleanField, DecimalField, CASCADE
+from django.db.models import TextChoices, ForeignKey, PROTECT, DateTimeField, CharField, TextField, \
+    PositiveSmallIntegerField, ManyToManyField, CASCADE
 from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import CreatedBaseModel, UUIDBaseModel
@@ -14,7 +14,6 @@ class Order(CreatedBaseModel):
     class LocationType(TextChoices):
         ONSITE = 'onsite', _('Onsite')
         ONLINE = 'online', _('Online')
-
 
     class FormalityLevel(TextChoices):
         BUSINESS = 'business', _('Business')
@@ -124,7 +123,7 @@ class Order(CreatedBaseModel):
         self.save()
 
         # Создать связь с переводчиком (через промежуточную модель)
-        OrderInterpreter.objects.create(order=self,interpreter=interpreter)
+        OrderInterpreter.objects.create(order=self, interpreter=interpreter)
 
 
 # ===== ПРОМЕЖУТОЧНАЯ МОДЕЛЬ ДЛЯ СВЯЗИ ЗАКАЗ-ПЕРЕВОДЧИК =====

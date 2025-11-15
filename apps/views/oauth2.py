@@ -113,7 +113,7 @@ def google_callback(request):
                     "last_name": last_name,
                 }
             )
-            success_url = 'client_profile'
+            success_url = 'dashboard'
 
         # 7. Устанавливаем непригодный пароль (пользователь использует Google)
         if created:
