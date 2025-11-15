@@ -8,61 +8,68 @@
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
 <body>
-<!-- ИЗМЕНЕНИЕ: заменил container на form-container -->
 <div class="form-container">
-    <!-- ИЗМЕНЕНИЕ: заменил card на form-box -->
     <div class="form-box">
         <div class="logo">
-            <!-- ИЗМЕНЕНИЕ: добавил класс form-title для единообразия -->
             <h1 class="form-title">Login to Your Account</h1>
         </div>
 
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             </div>
         {% endif %}
 
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-
-            <!-- Скрытое поле для типа пользователя -->
-            <input type="hidden" name="user_type" id="user_type" value="client">
-
-            <!-- Переключатель типа пользователя -->
-            <div class="form-field">
-                <label style="display: block; margin-bottom: 10px; font-weight: 500;">Login as:</label>
-                <div class="toggle-container">
-                    <button type="button" class="toggle-button active" data-type="client">Client</button>
-                    <button type="button" class="toggle-button" data-type="interpreter">Interpreter</button>
-                </div>
+        {% if form.non_field_errors %}
+            <div class="error-message">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
             </div>
+        {% endif %}
+
+        <div class="user-type-tabs">
+            <button type="button" class="tab-button active" data-type="client">Client</button>
+            <button type="button" class="tab-button" data-type="interpreter">Interpreter</button>
+        </div>
+
+        <form method="post" action="{% url 'apps:login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="user_type" id="user_type" value="client">
 
             <div class="form-field">
                 <label for="email">Email</label>
-                <input type="text" name="email" id="email" required>
+                <input type="email" name="email" id="email" required>
+                {% if form.email.errors %}
+                    <div class="field-error">
+                        {% for error in form.email.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
-            <!-- ИЗМЕНЕНИЕ: заменил form-group на form-field -->
             <div class="form-field">
                 <label for="password">Password</label>
                 <input type="password" name="password" id="password" required>
+                {% if form.password.errors %}
+                    <div class="field-error">
+                        {% for error in form.password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
-            <!-- ИЗМЕНЕНИЕ: заменил btn btn-primary на submit-button -->
             <button type="submit" class="submit-button">Login</button>
         </form>
 
-        <!-- ИЗМЕНЕНИЕ: добавил класс divider как в signup.html -->
         <div class="divider">
             <span>Or</span>
         </div>
 
-        <!-- Google Registration Button -->
         <button id="google-register" type="button" class="google-button">
             <svg width="20" height="20" viewBox="0 0 24 24">
                 <path fill="#4285F4"
@@ -77,41 +84,36 @@
             <span id="google-button-text">Continue with Google</span>
         </button>
 
-        <!-- ИЗМЕНЕНИЕ: заменил register-link на auth-link -->
         <div class="auth-link">
-            <p>No account? <a href="{% url 'client_signup' %}">Sign up</a></p>
+            <p>No account? <a id="signup-link" href="{% url 'apps:client_signup' %}">Sign up</a></p>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.toggle-button');
+    const tabButtons = document.querySelectorAll('.tab-button');
     const hiddenInput = document.getElementById('user_type');
     const signupLink = document.getElementById('signup-link');
+    const signupBaseUrl = "{% url 'apps:client_signup' %}";
+    const interpreterSignupUrl = "{% url 'apps:interpreter_signup' %}";
 
-    buttons.forEach(button => {
+    tabButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            buttons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
+            tabButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-            // Update hidden input value
-            hiddenInput.value = this.dataset.type;
+            const userType = this.dataset.type;
+            hiddenInput.value = userType;
 
-            // Update signup link based on user type
-            if (this.dataset.type === 'interpreter') {
-                signupLink.href = "{% url 'interpreter_signup' %}";
-                signupLink.textContent = "Sign up as Interpreter";
+            if (userType === 'interpreter') {
+                signupLink.href = interpreterSignupUrl;
             } else {
-                signupLink.href = "{% url 'client_signup' %}";
-                signupLink.textContent = "Sign up";
+                signupLink.href = signupBaseUrl;
             }
         });
     });
 });
 </script>
-
 
 <script src="{% static 'js/auth.js' %}"></script>
 </body>

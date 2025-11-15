@@ -13,5 +13,25 @@ class InterpreterProfileView(LoginRequiredMixin, TemplateView):
         return
 
 
-class ClientProfileView(TemplateView):
-    template_name = 'apps/profile/client-profile.html'
+class DashboardView(TemplateView):
+    template_name = 'apps/profile/dashboard.html'
+
+
+class ProfileView(TemplateView):
+    template_name = 'apps/profile/profile.html'
+
+
+class OrdersView(TemplateView):
+    template_name = 'apps/profile/orders.html'
+
+
+class NewOrderView(TemplateView):
+    template_name = 'apps/profile/new-order.html'
+
+
+class BillingView(TemplateView):
+    template_name = 'apps/profile/billing.html'
+
+
+class SettingsView(TemplateView):
+    template_name = 'apps/profile/settings.html'

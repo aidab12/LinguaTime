@@ -10,52 +10,74 @@
 <body>
 <div class="form-container">
     <div class="form-box">
-        <h1 id="form-title" class="form-title">Registration Form</h1>
+        <h1 id="form-title" class="form-title">Create Your Account</h1>
 
-        <!-- User Type Toggle -->
-        <div class="toggle-container">
-            <button id="client-toggle" class="toggle-button active">
-                <span id="client-label">Client</span>
-            </button>
-            <button id="interpreter-toggle" class="toggle-button">
-                <span id="interpreter-label">Interpreter</span>
-            </button>
+        {% if form.non_field_errors %}
+            <div class="error-message">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- User Type Tabs -->
+        <div class="user-type-tabs">
+            <button type="button" class="tab-button active" data-type="client">Client</button>
+            <button type="button" class="tab-button" data-type="interpreter">Interpreter</button>
         </div>
 
-        <form id="registration-form" method="post" action="{% url 'interpreter_signup' %}">
+        <form id="registration-form" method="post" action="{% url 'apps:client_signup' %}">
             {% csrf_token %}
             <div class="form-field">
                 <label for="first-name">First Name<span class="required">*</span></label>
                 <input type="text" name="first_name" id="first-name" required>
+                 {% if form.first_name.errors %}
+                    <div class="field-error">{% for error in form.first_name.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% endif %}
             </div>
 
             <div class="form-field">
                 <label for="last-name">Last Name <span class="required">*</span></label>
                 <input type="text" name="last_name" id="last-name" required>
+                {% if form.last_name.errors %}
+                    <div class="field-error">{% for error in form.last_name.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% endif %}
             </div>
 
             <div class="form-field">
                 <label for="phone">Phone <span class="required">*</span></label>
                 <input type="tel" name="phone" id="phone" required>
+                {% if form.phone.errors %}
+                    <div class="field-error">{% for error in form.phone.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% endif %}
             </div>
 
             <div class="form-field">
                 <label for="email">Email <span class="required">*</span></label>
                 <input type="email" name="email" id="email" required>
+                {% if form.email.errors %}
+                    <div class="field-error">{% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% endif %}
             </div>
 
             <div class="form-field">
                 <label for="password">Password <span class="required">*</span></label>
                 <input type="password" name="password" id="password" required>
+                {% if form.password.errors %}
+                    <div class="field-error">{% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% endif %}
             </div>
 
             <div class="form-field">
                 <label for="confirm-password">Confirm Password <span class="required">*</span></label>
                 <input type="password" name="confirm_password" id="confirm-password" required>
+                {% if form.confirm_password.errors %}
+                    <div class="field-error">{% for error in form.confirm_password.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% endif %}
             </div>
 
             <!-- Interpreter-only Fields -->
-            <div id="interpreter-fields" class="hidden">
+            <div id="interpreter-fields" style="display: none;">
                 <div class="form-field">
                     <label for="gender">Gender <span class="required">*</span></label>
                     <select name="gender" id="gender">
@@ -85,36 +107,24 @@
                 <div class="form-field">
                     <label>Languages <span class="required">*</span></label>
                     <div id="languages-list" class="multiselect-container">
-                        <div class="multiselect-option" data-value="eng_ru">
-                            <input type="checkbox" name="language" value="eng_ru">
-                            <span>English - Russian</span>
+                        {% for language in languages %}
+                        <div class="multiselect-option" data-value="{{ language.id }}">
+                            <input type="checkbox" name="language" value="{{ language.id }}">
+                            <span>{{ language.name }}</span>
                         </div>
-                        <div class="multiselect-option" data-value="ru_uz">
-                            <input type="checkbox" name="language" value="ru_uz">
-                            <span>Russian - Uzbek</span>
-                        </div>
-                        <div class="multiselect-option" data-value="en_uz">
-                            <input type="checkbox" name="language" value="en_uz">
-                            <span>English - Uzbek</span>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 
                 <div class="form-field">
                     <label>Translation Type <span class="required">*</span></label>
                     <div id="translation-type-list" class="multiselect-container">
-                        <div class="multiselect-option" data-value="simultaneous">
-                            <input type="checkbox" name="translation_type" value="simultaneous">
-                            <span>Simultaneous</span>
+                         {% for type in translation_types %}
+                        <div class="multiselect-option" data-value="{{ type.id }}">
+                            <input type="checkbox" name="translation_type" value="{{ type.id }}">
+                            <span>{{ type.name }}</span>
                         </div>
-                        <div class="multiselect-option" data-value="consecutive">
-                            <input type="checkbox" name="translation_type" value="consecutive">
-                            <span>Consecutive</span>
-                        </div>
-                        <div class="multiselect-option" data-value="written">
-                            <input type="checkbox" name="translation_type" value="written">
-                            <span>Written</span>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -140,15 +150,37 @@
 
         <div class="auth-link">
             <p>Already have an account?
-                <a href="{% url 'login' %}">Sign In</a>
+                <a href="{% url 'apps:login' %}">Sign In</a>
             </p>
-        </div>
-
-        <div id="success-message" class="success-message">
-            Registration successful!
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const registrationForm = document.getElementById('registration-form');
+    const interpreterFields = document.getElementById('interpreter-fields');
+    const clientSignupUrl = "{% url 'apps:client_signup' %}";
+    const interpreterSignupUrl = "{% url 'apps:interpreter_signup' %}";
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const userType = this.dataset.type;
+
+            if (userType === 'interpreter') {
+                registrationForm.action = interpreterSignupUrl;
+                interpreterFields.style.display = 'block';
+            } else {
+                registrationForm.action = clientSignupUrl;
+                interpreterFields.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
 
 <script src="{% static 'js/auth.js' %}"></script>
 </body>

@@ -91,6 +91,7 @@ class RegisterClientModelForm(ModelForm):
         phone = self.cleaned_data.get('phone')
         if phone and Client.objects.filter(phone=phone).exists():
             raise ValidationError("Phone already exists")
+        return phone
 
     def clean(self):
         cleaned_data = super().clean()
