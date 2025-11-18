@@ -1,0 +1,44 @@
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 z-40">
+    <div class="p-6">
+        <div class="flex items-center mb-8">
+            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <span class="text-white font-bold text-lg">C</span>
+            </div>
+            <div>
+                <h2 id="dashboard-title" class="text-xl font-bold section-title">Client Hub</h2>
+                <p class="text-sm text-gray-600">Client Dashboard</p>
+            </div>
+        </div>
+        <nav class="space-y-2">
+            <a href="{% url 'client_dashboard' %}" class="nav-item px-4 py-3 rounded-lg"><span
+                    class="text-lg mr-3">📊</span> <span class="font-medium">Dashboard</span></a>
+            <a href="{% url 'client_profile' %}" class="nav-item px-4 py-3 rounded-lg"><span class="text-lg mr-3">👤</span>
+                <span class="font-medium">Profile</span></a>
+            <a href="{% url 'client_orders' %}" class="nav-item px-4 py-3 rounded-lg"><span class="text-lg mr-3">📋</span>
+                <span class="font-medium">My Orders</span></a>
+            <a href="{% url 'client_new_order' %}" class="nav-item px-4 py-3 rounded-lg"><span
+                    class="text-lg mr-3">➕</span> <span class="font-medium">New Order</span></a>
+            <a href="{% url 'client_billing' %}" class="nav-item px-4 py-3 rounded-lg"><span class="text-lg mr-3">💰</span>
+                <span class="font-medium">Billing</span></a>
+            <a href="{% url 'client_settings' %}" class="nav-item active px-4 py-3 rounded-lg"><span class="text-lg mr-3">⚙️</span>
+                <span class="font-medium">Settings</span></a>
+        </nav>
+    </div>
+    <div class="absolute bottom-6 left-6 right-6">
+        <div class="glass-card rounded-lg p-4 text-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                <span class="text-white text-xl">👨‍💼</span>
+            </div>
+            <h3 class="font-semibold text-gray-800" id="user-name">
+                {% if client.full_name %}
+                	{{ client.full_name }}
+                {% else %}
+                    First Name Last Name
+                {% endif %}
+
+            </h3>
+
+        </div>
+    </div>
+</div>
