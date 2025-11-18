@@ -1,232 +1,235 @@
 {% extends 'apps/base.html' %}
-{% block title %}Orders{% endblock %}
+
+{% block title %}
+    Orders
+{% endblock %}
 
 {% block content %}
-<div id="orders-section" class="section">
-    <div class="glass-card rounded-2xl p-8">
-        <div class="flex items-center justify-between mb-8">
-            <h3 class="text-2xl font-semibold section-title">My Orders</h3>
-            <div class="flex space-x-2">
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn active" data-filter="all">
-                    All
-                </button>
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="pending">
-                    Pending
-                </button>
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="active">
-                    Active
-                </button>
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="completed">
-                    Completed
-                </button>
+    <div id="orders-section" class="section">
+        <div class="glass-card rounded-2xl p-8">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-2xl font-semibold section-title">My Orders</h3>
+                <div class="flex space-x-2">
+                    <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn active" data-filter="all">
+                        All
+                    </button>
+                    <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="pending">
+                        Pending
+                    </button>
+                    <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="active">
+                        Active
+                    </button>
+                    <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="completed">
+                        Completed
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="space-y-4" id="orders-list">
-            <!-- Orders will be populated here -->
-            <div class="space-y-6" id="orders-list">
-            <!-- Order 1 -->
-            <div class="order-card rounded-xl p-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold">JS</span>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800">John Smith</h4>
-                    <p class="text-sm text-gray-600">ORD-001</p>
-                  </div>
-                </div>
-                <div class="status-badge status-active">Active</div>
-              </div>
+            <div class="space-y-4" id="orders-list">
+                <!-- Orders will be populated here -->
+                <div class="space-y-6" id="orders-list">
+                    <!-- Order 1 -->
+                    <div class="order-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <span class="text-white font-bold">JS</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">John Smith</h4>
+                                    <p class="text-sm text-gray-600">ORD-001</p>
+                                </div>
+                            </div>
+                            <div class="status-badge status-active">Active</div>
+                        </div>
 
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
-                  <p class="font-medium">Business Meeting</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
-                  <p class="font-medium">2024-01-15 14:00</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
-                  <p class="font-medium">2 hours</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
-                  <p class="font-medium text-green-600">$120</p>
-                </div>
-              </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
+                                <p class="font-medium">Business Meeting</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
+                                <p class="font-medium">2024-01-15 14:00</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
+                                <p class="font-medium">2 hours</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
+                                <p class="font-medium text-green-600">$120</p>
+                            </div>
+                        </div>
 
-              <div class="flex justify-end space-x-2">
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm">Contact Interpreter</button>
-                <button class="primary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
-              </div>
+                        <div class="flex justify-end space-x-2">
+                            <button class="secondary-btn px-4 py-2 rounded-lg text-sm">Contact Interpreter</button>
+                            <button class="primary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Order 2 -->
+                    <div class="order-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                                    <span class="text-white font-bold">MG</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Maria Garcia</h4>
+                                    <p class="text-sm text-gray-600">ORD-002</p>
+                                </div>
+                            </div>
+                            <div class="status-badge status-completed">Completed</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
+                                <p class="font-medium">Medical Consultation</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
+                                <p class="font-medium">2024-01-14 10:30</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
+                                <p class="font-medium">1.5 hours</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
+                                <p class="font-medium text-green-600">$90</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button class="secondary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
+                            <button class="primary-btn px-4 py-2 rounded-lg text-sm">Leave Review</button>
+                        </div>
+                    </div>
+
+                    <!-- Order 3 -->
+                    <div class="order-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-red-500 rounded-lg flex items-center justify-center">
+                                    <span class="text-white font-bold">AJ</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Alex Johnson</h4>
+                                    <p class="text-sm text-gray-600">ORD-003</p>
+                                </div>
+                            </div>
+                            <div class="status-badge status-pending">Pending</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
+                                <p class="font-medium">Legal Document</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
+                                <p class="font-medium">2024-01-16 09:00</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
+                                <p class="font-medium">3 hours</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
+                                <p class="font-medium text-green-600">$180</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button class="secondary-btn px-4 py-2 rounded-lg text-sm">Cancel</button>
+                            <button class="primary-btn px-4 py-2 rounded-lg text-sm">Contact</button>
+                        </div>
+                    </div>
+
+                    <!-- Order 4 -->
+                    <div class="order-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg flex items-center justify-center">
+                                    <span class="text-white font-bold">EK</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Elena Kowalski</h4>
+                                    <p class="text-sm text-gray-600">ORD-004</p>
+                                </div>
+                            </div>
+                            <div class="status-badge status-completed">Completed</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
+                                <p class="font-medium">Conference</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
+                                <p class="font-medium">2024-01-10 13:00</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
+                                <p class="font-medium">4 hours</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
+                                <p class="font-medium text-green-600">$240</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button class="secondary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
+                            <button class="primary-btn px-4 py-2 rounded-lg text-sm">Download Documents</button>
+                        </div>
+                    </div>
+
+                    <!-- Order 5 -->
+                    <div class="order-card rounded-xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center">
+                                    <span class="text-white font-bold">RW</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">Robert Williams</h4>
+                                    <p class="text-sm text-gray-600">ORD-005</p>
+                                </div>
+                            </div>
+                            <div class="status-badge status-cancelled">Cancelled</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
+                                <p class="font-medium">Technical Documentation</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
+                                <p class="font-medium">2024-01-05 11:00</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
+                                <p class="font-medium">2 hours</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
+                                <p class="font-medium text-green-600">$120</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-2">
+                            <button class="secondary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
+                            <button class="primary-btn px-4 py-2 rounded-lg text-sm">Reorder</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Order 2 -->
-            <div class="order-card rounded-xl p-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold">MG</span>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800">Maria Garcia</h4>
-                    <p class="text-sm text-gray-600">ORD-002</p>
-                  </div>
-                </div>
-                <div class="status-badge status-completed">Completed</div>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
-                  <p class="font-medium">Medical Consultation</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
-                  <p class="font-medium">2024-01-14 10:30</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
-                  <p class="font-medium">1.5 hours</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
-                  <p class="font-medium text-green-600">$90</p>
-                </div>
-              </div>
-
-              <div class="flex justify-end space-x-2">
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
-                <button class="primary-btn px-4 py-2 rounded-lg text-sm">Leave Review</button>
-              </div>
-            </div>
-
-            <!-- Order 3 -->
-            <div class="order-card rounded-xl p-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 bg-gradient-to-r from-yellow-400 to-red-500 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold">AJ</span>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800">Alex Johnson</h4>
-                    <p class="text-sm text-gray-600">ORD-003</p>
-                  </div>
-                </div>
-                <div class="status-badge status-pending">Pending</div>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
-                  <p class="font-medium">Legal Document</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
-                  <p class="font-medium">2024-01-16 09:00</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
-                  <p class="font-medium">3 hours</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
-                  <p class="font-medium text-green-600">$180</p>
-                </div>
-              </div>
-
-              <div class="flex justify-end space-x-2">
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm">Cancel</button>
-                <button class="primary-btn px-4 py-2 rounded-lg text-sm">Contact</button>
-              </div>
-            </div>
-
-            <!-- Order 4 -->
-            <div class="order-card rounded-xl p-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold">EK</span>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800">Elena Kowalski</h4>
-                    <p class="text-sm text-gray-600">ORD-004</p>
-                  </div>
-                </div>
-                <div class="status-badge status-completed">Completed</div>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
-                  <p class="font-medium">Conference</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
-                  <p class="font-medium">2024-01-10 13:00</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
-                  <p class="font-medium">4 hours</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
-                  <p class="font-medium text-green-600">$240</p>
-                </div>
-              </div>
-
-              <div class="flex justify-end space-x-2">
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
-                <button class="primary-btn px-4 py-2 rounded-lg text-sm">Download Documents</button>
-              </div>
-            </div>
-
-            <!-- Order 5 -->
-            <div class="order-card rounded-xl p-6">
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-4">
-                  <div class="w-12 h-12 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center">
-                    <span class="text-white font-bold">RW</span>
-                  </div>
-                  <div>
-                    <h4 class="font-semibold text-gray-800">Robert Williams</h4>
-                    <p class="text-sm text-gray-600">ORD-005</p>
-                  </div>
-                </div>
-                <div class="status-badge status-cancelled">Cancelled</div>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Type</p>
-                  <p class="font-medium">Technical Documentation</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Date & Time</p>
-                  <p class="font-medium">2024-01-05 11:00</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
-                  <p class="font-medium">2 hours</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500 uppercase tracking-wide">Amount</p>
-                  <p class="font-medium text-green-600">$120</p>
-                </div>
-              </div>
-
-              <div class="flex justify-end space-x-2">
-                <button class="secondary-btn px-4 py-2 rounded-lg text-sm">View Details</button>
-                <button class="primary-btn px-4 py-2 rounded-lg text-sm">Reorder</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
         </div>
     </div>
-</div>
+    </div>
+    </div>
 {% endblock %}
