@@ -1,0 +1,77 @@
+{% extends 'apps/base.html' %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <!-- Content Sections -->
+
+    <div id="profile-section" class="section">
+        <div class="glass-card rounded-2xl p-8">
+            <h3 class="text-2xl font-semibold section-title mb-8" id="profile-section-title">Profile Management</h3>
+            <form id="profile-form">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><!-- Profile Photo -->
+                    <div class="lg:col-span-1">
+                        <div class="text-center">
+                            <div class="w-32 h-32 bg-gradient-to-r from-blue-400 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                <span class="text-white text-4xl">👨‍💼</span>
+                            </div>
+                            <button type="button" class="secondary-btn px-4 py-2 rounded-lg text-sm"> Change Photo
+                            </button>
+                        </div>
+                    </div><!-- Profile Information -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="profile-first-name" class="block text-sm font-medium mb-2">First
+                                Name</label> <input type="text" id="profile-first-name" name="first_name"
+                                                    class="input-field w-full px-4 py-3 rounded-xl"
+                                                    placeholder="Enter first name">
+                            </div>
+                            <div><label for="profile-last-name" class="block text-sm font-medium mb-2">Last
+                                Name</label> <input type="text" id="profile-last-name" name="last_name"
+                                                    class="input-field w-full px-4 py-3 rounded-xl"
+                                                    placeholder="Enter last name">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="profile-email" class="block text-sm font-medium mb-2">Email</label>
+                                <input type="email" id="profile-email" name="email"
+                                       class="input-field w-full px-4 py-3 rounded-xl" placeholder="Enter email">
+                            </div>
+                            <div><label for="profile-phone" class="block text-sm font-medium mb-2">Phone</label>
+                                <input type="tel" id="profile-phone" name="phone"
+                                       class="input-field w-full px-4 py-3 rounded-xl" placeholder="Enter phone">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="profile-company" class="block text-sm font-medium mb-2">Company</label>
+                                <input type="text" id="profile-company" name="company"
+                                       class="input-field w-full px-4 py-3 rounded-xl"
+                                       placeholder="Enter company name">
+                            </div>
+                            <div><label for="profile-industry"
+                                        class="block text-sm font-medium mb-2">Industry</label> <select
+                                    id="profile-industry" name="industry"
+                                    class="input-field w-full px-4 py-3 rounded-xl">
+                                <option value="">Select industry</option>
+                                <option value="technology">Technology</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="legal">Legal</option>
+                                <option value="finance">Finance</option>
+                                <option value="education">Education</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div><label for="profile-notes" class="block text-sm font-medium mb-2">Additional
+                            Notes</label> <textarea id="profile-notes" name="notes" rows="4"
+                                                    class="input-field w-full px-4 py-3 rounded-xl"
+                                                    placeholder="Any additional information for interpreters..."></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" class="secondary-btn px-6 py-3 rounded-xl">Cancel</button>
+                            <button type="submit" class="primary-btn px-6 py-3 rounded-xl">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

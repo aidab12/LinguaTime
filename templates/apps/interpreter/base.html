@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Interpreter Hub{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/client-profile.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="min-h-full">
+<!-- Mobile Menu Button -->
+<button id="mobile-menu-btn" class="mobile-menu-btn fixed top-4 left-4 z-50 p-3 bg-white rounded-lg shadow-lg">
+    <span class="text-xl">☰</span>
+</button>
+
+<!-- Sidebar -->
+{% include 'apps/parts/interpreter_sidebar.html' %}
+
+<div class="main-content ml-64 min-h-full">
+
+    <!-- Header -->
+    {% include 'apps/parts/header.html' %}
+
+    <!-- Page Content -->
+    <div class="p-6">
+        {% block content %}
+            <!-- Page-specific content will go here -->
+        {% endblock %}
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Mobile menu
+    document.getElementById('mobile-menu-btn').addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    // Highlight active nav item
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('#sidebar .nav-item');
+
+        let bestMatch = null;
+        let longestMatch = 0;
+
+        navItems.forEach(item => {
+            const link = item.querySelector('a');
+            if (!link) return;
+
+            const linkPath = new URL(link.href).pathname;
+
+            if (currentPath.startsWith(linkPath)) {
+                if (linkPath.length > longestMatch) {
+                    if (linkPath === '/' && currentPath !== '/') {
+                        return;
+                    }
+                    longestMatch = linkPath.length;
+                    bestMatch = item;
+                }
+            }
+        });
+
+        navItems.forEach(item => item.classList.remove('active'));
+
+        if (bestMatch) {
+            bestMatch.classList.add('active');
+        }
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% extends 'apps/interpreter/base.html' %}
+{% block title %}Interpreter Orders{% endblock %}
+
+{% block content %}
+<!-- Orders Section -->
+<div id="orders-section" class="section">
+    <div class="glass-card rounded-2xl p-8">
+        <div class="flex items-center justify-between mb-8">
+            <h3 class="text-2xl font-semibold section-title">Order Management</h3>
+            <div class="flex space-x-2">
+                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn active" data-filter="all">
+                    All
+                </button>
+                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="pending">
+                    Pending
+                </button>
+                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="active">
+                    Active
+                </button>
+                <button class="secondary-btn px-4 py-2 rounded-lg text-sm filter-btn" data-filter="completed">
+                    Completed
+                </button>
+            </div>
+        </div>
+        <div class="space-y-4" id="orders-list"><!-- Orders will be populated here -->
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,718 @@
+{% extends 'apps/base.html' %}
+{% block title %}New Order{% endblock %}
+
+{% block extra_css %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Removed body, h1, subtitle, container styles as they conflict with existing tailwind/client-profile.css */
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        /* Removed label, input[type="date"], input[type="text"], textarea, select styles as they conflict with existing tailwind/client-profile.css */
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .date-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Removed btn styles as they conflict with existing tailwind/client-profile.css */
+
+        .calendar-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .calendar-section.active {
+            display: block;
+        }
+
+        .calendar-header {
+            margin-bottom: 20px;
+        }
+
+        .calendar-header h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .calendar-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .calendar-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .calendar-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .calendar-table th {
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .calendar-table td {
+            padding: 0;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .calendar-table td.weekend {
+            background: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .date-cell.weekend {
+            background: #f0f0f0;
+            opacity: 0.7;
+            color: #888;
+        }
+
+        .slot-cell.weekend {
+            background: #f8f9fa;
+            opacity: 0.7;
+        }
+
+        .slot-cell.weekend:hover {
+            background: #e8e8ff;
+            opacity: 0.8;
+        }
+
+        .slot-cell.weekend.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.9;
+        }
+
+        .date-cell {
+            font-weight: 600;
+            color: #333;
+            padding: 10px;
+            background: #f8f9fa;
+        }
+
+        .slot-cell {
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .slot-cell:hover {
+            background: #f0f0ff;
+        }
+
+        .slot-cell.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .checkbox-wrapper label {
+            margin: 0;
+            font-size: 13px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .slot-cell.selected .checkbox-wrapper label {
+            color: white;
+            font-weight: 600;
+        }
+
+        .selection-summary {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .selection-summary.active {
+            display: block;
+        }
+
+        .selection-summary h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .selection-summary p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .submit-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .submit-section.active {
+            display: block;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .calendar-table {
+                font-size: 12px;
+            }
+
+            .calendar-table th,
+            .calendar-table td {
+                padding: 8px 4px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- New Order Section -->
+    <div id="new-order-section" class="section">
+        <div class="glass-card rounded-2xl p-8">
+            <h3 class="text-2xl font-semibold section-title mb-8">Create New Order</h3>
+            <form id="new-order-form">
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <div>
+                            <span class="block text-sm font-medium mb-2">Translation types:</span>
+
+                            <label class="flex items-center gap-2 mb-2">
+                                <input type="radio"
+                                       name="order_type"
+                                       value="business_meeting"
+                                       class="rounded" checked>
+                                <span>Synchronous</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 mb-2">
+                                <input type="radio"
+                                       name="order_type"
+                                       value="medical_consultation"
+                                       class="rounded">
+                                <span>Consistent</span>
+                            </label>
+
+                            <label class="flex items-center gap-2">
+                                <input type="radio"
+                                       name="order_type"
+                                       value="legal_document"
+                                       class="rounded">
+                                <span>Written</span>
+                            </label>
+                        </div>
+
+
+                        <div>
+                            <label for="order-language" class="block text-sm font-medium mb-2">
+                                Language Pair
+                                <span class="text-xs text-gray-500">(Hold Ctrl/Cmd to select multiple)</span>
+                            </label>
+                            <select id="order-language" name="language_pair" multiple
+                                    class="input-field w-full px-4 py-3 rounded-xl">
+                                {% for pair in language_pairs %}
+                                    <option value="{{ pair.id }}"
+                                            {% if pair.id == '294eece6-45b9-4388-b599-5a9b0b38916f' %}selected{% endif %}>
+                                        {{ pair.source.name }} → {{ pair.target.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <span class="block text-sm font-medium mb-2">Event Type:</span>
+                            <label class="flex items-center gap-2 mb-2">
+                                <input type="radio" name="event_type" value="online" class="rounded">
+                                <span>Online</span>
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="event_type" value="offline" class="rounded" checked>
+                                <span>Offline</span>
+                            </label>
+                        </div>
+
+                        <!-- Поле для Zoom ссылки (изначально скрыто) -->
+                        <div id="zoom-field" class="hidden">
+                            <label for="zoom-link" class="block text-sm font-medium mb-2">Zoom Link</label>
+                            <input type="url" id="zoom-link" name="zoom_link"
+                                   class="input-field w-full px-4 py-3 rounded-xl"
+                                   placeholder="https://zoom.us/j/...">
+                        </div>
+                    </div>
+
+                    <!-- Поля для оффлайн события (изначально показаны) -->
+                    <div id="offline-fields">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="order-city" class="block text-sm font-medium mb-2">City</label>
+                                <select id="order-city" name="city" class="input-field w-full px-4 py-3 rounded-xl">
+                                    <option value="">Select City</option>
+                                    {% for city in cities %}
+                                        <option value="{{ city.id }}"
+                                                {% if city.name == 'Tashkent' %}selected{% endif %}>
+                                            {{ city.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="order-location" class="block text-sm font-medium mb-2">Location</label>
+                                <input type="text" id="order-location" name="location"
+                                       class="input-field w-full px-4 py-3 rounded-xl" placeholder="Enter location">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="order-details" class="block text-sm font-medium mb-2">Order Details</label>
+                        <textarea id="order-details" name="details" rows="4"
+                                  class="input-field w-full px-4 py-3 rounded-xl"
+                                  placeholder="Provide details about your translation needs..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label for="startDate" class="block text-sm font-medium mb-2">Start Date</label> <input
+                                type="date" id="startDate" name="start_date"
+                                class="input-field w-full px-4 py-3 rounded-xl" required>
+                        </div>
+                        <div><label for="endDate" class="block text-sm font-medium mb-2">End Date</label> <input
+                                type="date" id="endDate" name="end_date"
+                                class="input-field w-full px-4 py-3 rounded-xl" required>
+                        </div>
+                    </div>
+                    <button type="button" class="primary-btn px-6 py-3 rounded-xl" id="generateCalendar">
+                        🗓️ Generate Calendar
+                    </button>
+
+
+                </div>
+            </form>
+            <div class="calendar-section" id="calendarSection">
+                <div class="calendar-header">
+                    <h2>Select time slots</h2>
+                    <p class="calendar-info">Mark the work periods you need (morning/evening)</p>
+                </div>
+
+                <table class="calendar-table" id="calendarTable">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>First half of the day<br>(09:00 - 14:00)</th>
+                        <th>Afternoon<br>(14:00 - 18:00)</th>
+                    </tr>
+                    </thead>
+                    <tbody id="calendarBody">
+                    </tbody>
+                </table>
+
+                <div class="selection-summary" id="selectionSummary">
+                    <h3>✅ Selected slots</h3>
+                    <p id="summaryText">Slots are not selected</p>
+                </div>
+
+                <div class="submit-section" id="submitSection">
+                    <button type="button" class="primary-btn px-6 py-3 rounded-xl" id="submitOrder">
+                        📤 Send an order
+                    </button>
+                </div>
+
+                {#                    <div class="flex justify-end space-x-4">#}
+                {#                            <button type="button" class="secondary-btn px-6 py-3 rounded-xl">Cancel</button>#}
+                {#                            <button type="submit" class="primary-btn px-6 py-3 rounded-xl">Submit Order</button>#}
+                {#                    </div>#}
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <strong>✅ The order has been successfully sent!</strong><br>
+                We will contact you as soon as possible.
+            </div>
+        </div>
+    </div>
+
+    {% block extra_js %}
+        <script>
+
+            // Обработка переключения между Online/Offline
+            const eventTypeRadios = document.querySelectorAll('input[name="event_type"]');
+            const zoomField = document.getElementById('zoom-field');
+            const offlineFields = document.getElementById('offline-fields');
+
+            eventTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (this.value === 'online') {
+                        zoomField.classList.remove('hidden');
+                        offlineFields.classList.add('hidden');
+                        // Очищаем обязательные поля оффлайн
+                        document.getElementById('order-city').required = false;
+                        document.getElementById('order-location').required = false;
+                        // Делаем поле Zoom обязательным
+                        document.getElementById('zoom-link').required = true;
+                    } else {
+                        zoomField.classList.add('hidden');
+                        offlineFields.classList.remove('hidden');
+                        // Очищаем поле Zoom
+                        document.getElementById('zoom-link').required = false;
+                        // Делаем поля оффлайн обязательными
+                        document.getElementById('order-city').required = true;
+                        document.getElementById('order-location').required = true;
+                    }
+                });
+            });
+
+            const formElements = {
+                startDate: document.getElementById('startDate'),
+                endDate: document.getElementById('endDate'),
+                generateBtn: document.getElementById('generateCalendar'),
+                calendarSection: document.getElementById('calendarSection'),
+                calendarBody: document.getElementById('calendarBody'),
+                selectionSummary: document.getElementById('selectionSummary'),
+                summaryText: document.getElementById('summaryText'),
+                submitSection: document.getElementById('submitSection'),
+                submitBtn: document.getElementById('submitOrder'), // This is the calendar's submit button
+                successMessage: document.getElementById('successMessage'),
+                // Removed clientName, serviceType, description as they are handled by the main form
+            };
+
+            const selectedSlots = new Set();
+
+            // Set minimum date for start and end date inputs
+            const today = new Date().toISOString().split('T')[0];
+            formElements.startDate.min = today;
+            formElements.endDate.min = today;
+
+            // Update minimum end date when start date changes
+            formElements.startDate.addEventListener('change', () => {
+                formElements.endDate.min = formElements.startDate.value;
+                if (formElements.endDate.value && formElements.endDate.value < formElements.startDate.value) {
+                    formElements.endDate.value = '';
+                }
+            });
+
+            // Generate calendar on button click
+            formElements.generateBtn.addEventListener('click', () => {
+                const startDate = new Date(formElements.startDate.value);
+                const endDate = new Date(formElements.endDate.value);
+
+                if (!formElements.startDate.value || !formElements.endDate.value) {
+                    alert('Please select both start and end dates.');
+                    return;
+                }
+
+                if (startDate > endDate) {
+                    alert('Start date cannot be after end date.');
+                    return;
+                }
+
+                const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+                if (daysDiff > 31) {
+                    alert('Maximum booking period is 31 days.');
+                    return;
+                }
+
+                generateCalendar(startDate, endDate);
+                formElements.calendarSection.classList.add('active');
+                formElements.calendarSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+            });
+
+            function generateCalendar(startDate, endDate) {
+                formElements.calendarBody.innerHTML = '';
+                selectedSlots.clear();
+
+                const currentDate = new Date(startDate);
+                const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                while (currentDate <= endDate) {
+                    const row = document.createElement('tr');
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    const dayOfWeek = daysOfWeek[currentDate.getDay()];
+                    const day = currentDate.getDate();
+                    const month = months[currentDate.getMonth()];
+                    const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
+
+                    const dateCell = document.createElement('td');
+                    dateCell.className = 'date-cell';
+                    if (isWeekend) {
+                        dateCell.classList.add('weekend');
+                    }
+                    dateCell.innerHTML = `<strong>${day} ${month}</strong><br><small>${dayOfWeek}</small>`;
+                    row.appendChild(dateCell);
+
+                    const morning = createSlotCell(dateStr, 'morning');
+                    row.appendChild(morning);
+
+                    const evening = createSlotCell(dateStr, 'evening');
+                    row.appendChild(evening);
+
+                    formElements.calendarBody.appendChild(row);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                updateSummary();
+            }
+
+            function createSlotCell(date, period) {
+                const cell = document.createElement('td');
+                cell.className = 'slot-cell';
+
+                const slotId = `${date}-${period}`;
+                const checkboxId = `slot-${slotId}`;
+                const label = period === 'morning' ? 'Morning' : 'Evening';
+
+                cell.innerHTML = `
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="${checkboxId}" data-slot="${slotId}">
+                <label for="${checkboxId}">${label}</label>
+            </div>
+        `;
+
+                const checkbox = cell.querySelector('input[type="checkbox"]');
+
+                const weekday = new Date(date).getDay(); // 0 = Sunday, 6 = Saturday
+                if (weekday !== 0 && weekday !== 6) {
+                    checkbox.checked = true;
+                    selectedSlots.add(slotId);
+                    cell.classList.add('selected');
+                }
+
+                checkbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        selectedSlots.add(slotId);
+                        cell.classList.add('selected');
+                    } else {
+                        selectedSlots.delete(slotId);
+                        cell.classList.remove('selected');
+                    }
+                    updateSummary();
+                });
+
+                cell.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+
+                return cell;
+            }
+
+            function updateSummary() {
+                const count = selectedSlots.size;
+
+                if (count === 0) {
+                    formElements.selectionSummary.classList.remove('active');
+                    formElements.submitSection.classList.remove('active');
+                    formElements.summaryText.textContent = 'No slots selected';
+                } else {
+                    formElements.selectionSummary.classList.add('active');
+                    formElements.submitSection.classList.add('active');
+
+                    const hours = count * 5; // 5 hours per slot
+                    formElements.summaryText.innerHTML = `
+                Selected <strong>${count}</strong> slot(s)<br>
+                Total time: <strong>${hours}</strong> hour(s)
+            `;
+                }
+            }
+
+            function getSlotsWord(count) {
+                return 'slot(s)'; // Simplified for English
+            }
+
+            function getHoursWord(count) {
+                return 'hour(s)'; // Simplified for English
+            }
+
+
+            // Функция валидации формы
+            document.getElementById('new-order-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const eventType = document.querySelector('input[name="event_type"]:checked').value;
+                const orderType = document.querySelector('input[name="order_type"]:checked').value;
+                const orderLanguage = document.getElementById('order-language').value;
+                const orderDuration = document.getElementById('order-duration').value;
+                const orderDetails = document.getElementById('order-details').value;
+
+                // Валидация в зависимости от типа события
+                if (eventType === 'online') {
+                    const zoomLink = document.getElementById('zoom-link').value;
+                    if (!zoomLink) {
+                        alert('Please enter Zoom link for online event.');
+                        return;
+                    }
+                } else {
+                    const orderCity = document.getElementById('order-city').value;
+                    const orderLocation = document.getElementById('order-location').value;
+                    if (!orderCity || !orderLocation) {
+                        alert('Please fill in city and location for offline event.');
+                        return;
+                    }
+                }
+
+                if (!orderType || !orderLanguage || !orderDuration || !orderDetails) {
+                    alert('Please fill in all required order details.');
+                    return;
+                }
+
+                if (selectedSlots.size === 0) {
+                    alert('Please select at least one time slot from the calendar.');
+                    return;
+                }
+
+                // Подготовка данных для отправки
+                const orderData = {
+                    eventType: eventType,
+                    orderType: orderType,
+                    orderLanguage: orderLanguage,
+                    orderDuration: orderDuration,
+                    orderDetails: orderDetails,
+                    startDate: formElements.startDate.value,
+                    endDate: formElements.endDate.value,
+                    selectedSlots: Array.from(selectedSlots),
+                    totalSlots: selectedSlots.size,
+                    totalHours: selectedSlots.size * 5
+                };
+
+                // Добавляем данные в зависимости от типа события
+                if (eventType === 'online') {
+                    orderData.zoomLink = document.getElementById('zoom-link').value;
+                } else {
+                    orderData.city = document.getElementById('order-city').value;
+                    orderData.location = document.getElementById('order-location').value;
+                }
+
+                console.log('Submitting Order:', orderData);
+
+                // Здесь будет отправка данных на сервер
+
+                formElements.successMessage.classList.add('active');
+                formElements.submitSection.style.display = 'none';
+
+                setTimeout(() => {
+                    formElements.successMessage.classList.remove('active');
+                    resetForm();
+                }, 5000);
+            });
+
+            // Function to get CSRF token (if needed for Django forms)
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+
+            // resetForm для сброса новых полей
+            function resetForm() {
+                document.getElementById('new-order-form').reset();
+                // Сбрасываем видимость полей к состоянию по умолчанию (Offline)
+                zoomField.classList.add('hidden');
+                offlineFields.classList.remove('hidden');
+                document.getElementById('order-city').required = true;
+                document.getElementById('order-location').required = true;
+                document.getElementById('zoom-link').required = false;
+
+                formElements.calendarSection.classList.remove('active');
+                formElements.selectionSummary.classList.remove('active');
+                formElements.submitSection.classList.remove('active');
+                selectedSlots.clear();
+            }
+        </script>
+    {% endblock %}
+{% endblock %}
