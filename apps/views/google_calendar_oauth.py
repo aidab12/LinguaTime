@@ -1,15 +1,16 @@
+import logging
 import secrets
 import urllib.parse
-import logging
 
 import requests
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
-from django.http import JsonResponse
-from django.conf import settings
 
+from apps.models import GoogleCalendarCredentials  # Import GoogleCalendarCredentials
 from apps.models import Interpreter
 from apps.services.google_calendar import GoogleCalendarService
 
@@ -20,11 +21,6 @@ class GoogleCalendarAuthorizeView(LoginRequiredMixin, View):
     """
     Инициирует OAuth flow для подключения Google Calendar.
     Только для авторизованных переводчиков.
-
-    Отличие от основного OAuth:
-    - Требует уже авторизованного пользователя
-    - Запрашивает только Calendar scopes
-    - Сохраняет токены отдельно от основной авторизации
     """
 
     GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth"
@@ -39,10 +35,17 @@ class GoogleCalendarAuthorizeView(LoginRequiredMixin, View):
 
         # Проверяем, не подключён ли уже календарь
         if request.user.google_calendar_connected:
+            # Use the service to check if credentials are still valid
             calendar_service = GoogleCalendarService(str(request.user.id))
             if calendar_service.is_authorized():
-                messages.info(request, "Calendar is already connected")
+                messages.info(request, "Calendar is already connected and authorized.")
                 return redirect('interpreter_profile')
+            else:
+                # If not authorized, reset connection status to allow re-authorization
+                request.user.google_calendar_connected = False
+                request.user.save(update_fields=['google_calendar_connected'])
+                messages.warning(request, "Your Google Calendar connection needs to be re-authorized.")
+
 
         # Генерируем state для CSRF защиты
         state = secrets.token_urlsafe(32)
@@ -184,31 +187,26 @@ class GoogleCalendarCallbackView(LoginRequiredMixin, View):
         if not tokens.get("access_token"):
             raise ValueError("No access token received")
 
-        if not tokens.get("refresh_token"):
-            logger.warning(
-                "No refresh token received. "
-                "User may need to reauthorize when token expires."
-            )
+        # Refresh token might not be present if access_type is not 'offline'
+        # or if it's a subsequent authorization for the same user.
+        # We should still save it if it exists.
 
         return tokens
 
     def _save_credentials(self, user, tokens):
         """Сохраняет credentials через GoogleCalendarService"""
-        from google.oauth2.credentials import Credentials
-
-        # Создаём Credentials объект
-        credentials = Credentials(
-            token=tokens['access_token'],
-            refresh_token=tokens.get('refresh_token'),
-            token_uri=self.TOKEN_URL,
-            client_id=settings.GOOGLE_CLIENT_ID,
-            client_secret=settings.GOOGLE_CLIENT_SECRET,
-            scopes=settings.GOOGLE_OAUTH_SCOPES['calendar']
+        # Use GoogleCalendarCredentials model directly
+        GoogleCalendarCredentials.objects.update_or_create(
+            user=user,
+            defaults={
+                'token': tokens['access_token'],
+                'refresh_token': tokens.get('refresh_token'), # Use .get() as refresh_token might not always be present
+                'token_uri': self.TOKEN_URL, # This should be the token exchange endpoint
+                'client_id': settings.GOOGLE_CLIENT_ID,
+                'client_secret': settings.GOOGLE_CLIENT_SECRET,
+                'scopes': ' '.join(settings.GOOGLE_OAUTH_SCOPES['calendar']),
+            }
         )
-
-        # Сохраняем через сервис
-        calendar_service = GoogleCalendarService(str(user.id))
-        calendar_service.save_credentials_from_flow(credentials)
 
     def _initial_sync(self, user):
         """Выполняет первоначальную синхронизацию календаря"""
@@ -233,23 +231,12 @@ class GoogleCalendarDisconnectView(LoginRequiredMixin, View):
             return JsonResponse({'error': 'Not authorized'}, status=403)
 
         try:
-            calendar_service = GoogleCalendarService(str(request.user.id))
+            # Delete credentials from our database
+            GoogleCalendarCredentials.objects.filter(user=request.user).delete()
 
-            # Удаляем файл с токенами
-            if calendar_service.token_path.exists():
-                calendar_service.token_path.unlink()
-                logger.info(f"Deleted calendar tokens for {request.user.email}")
-
-            # Обновляем статус в БД
+            # Update status in DB
             request.user.google_calendar_connected = False
             request.user.save(update_fields=['google_calendar_connected'])
-
-            # Опционально: удаляем синхронизированные события
-            # from apps.models.availabilitys import Availability
-            # Availability.objects.filter(
-            #     translator=request.user,
-            #     google_event_id__isnull=False
-            # ).delete()
 
             messages.success(request, "Google Calendar disconnected successfully")
 

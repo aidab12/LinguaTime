@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 
-from apps.models import Interpreter, Client, Order, Booking, User, Review, Country, Region, City, Language, \
-    Availability, OrderInterpreter
+from apps.models import Interpreter, Client, Order, Booking, Country, Region, City, Language, \
+    Availability
 from apps.models.languages import TranslationType, LanguagePair
+from apps.models.orders import OrderInterpreter
 
 
 @admin.register(Interpreter)
@@ -26,14 +27,6 @@ class BookingModelAdmin(ModelAdmin):
     pass
 
 
-@admin.register(Review)
-class ReviewModelAdmin(ModelAdmin):
-    pass
-
-
-@admin.register(User)
-class UserModelAdmin(ModelAdmin):
-    pass
 
 
 class RegionInline(admin.TabularInline):

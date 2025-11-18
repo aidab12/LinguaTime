@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.db.models import ForeignKey, TextChoices, CASCADE, DateTimeField, CharField, TextField
+from django.db.models import ForeignKey, TextChoices, CASCADE, DateTimeField, CharField, TextField, BooleanField
 
 from apps.models.base import CreatedBaseModel
 from django.utils.translation import gettext_lazy as _
@@ -19,29 +19,11 @@ class Availability(CreatedBaseModel):
                      default=AvailabilityType.AVAILABLE
                      )
 
-    # Повторяющиеся события
-    # is_recurring = BooleanField(
-    #     default=False,
-    #     verbose_name='Повторяющееся событие'
-    # )
-    #
-    # recurrence_rule = TextField(
-    #     blank=True,
-    #     null=True,
-    #     help_text='Правило повторения в формате iCalendar RRULE',
-    #     verbose_name='Правило повторения'
-    # )
-    #
-    # recurrence_end_date = DateTimeField(
-    #     blank=True,
-    #     null=True,
-    #     verbose_name='Дата окончания повторений'
-    # )
-
     # Интеграция с Google Calendar
     google_event_id = CharField(_('ID события Google Calendar'), max_length=255, blank=True, null=True, unique=True)
     google_sync_token = TextField(_('Токен синхронизации Google'), blank=True, null=True)
     last_synced_at = DateTimeField(_('Последняя синхронизация'), blank=True, null=True)
+    is_google_calendar_event = BooleanField(_('Событие из Google Calendar'), default=False)
 
 
     translator = ForeignKey('apps.Interpreter', CASCADE, related_name='availabilities', verbose_name=_('Переводчик'))

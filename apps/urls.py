@@ -4,6 +4,12 @@ from apps.views import RegisterInterpreterCreateView, RegisterCreateView, LoginV
     DashboardView, ProfileView, OrdersView, NewOrderView, BillingView, SettingsView
 from apps.views.oauth2 import GoogleLoginView, GoogleCallbackView
 from apps.views.profile import InterpreterProfileView
+from apps.views.google_calendar_oauth import (
+    GoogleCalendarAuthorizeView,
+    GoogleCalendarCallbackView,
+    GoogleCalendarDisconnectView,
+    CalendarStatusAPIView
+)
 
 urlpatterns = [
     path('', LoginView.as_view(), name='login_page'),
@@ -22,4 +28,9 @@ urlpatterns = [
 
     path('interpreter/profile/', InterpreterProfileView.as_view(), name='interpreter_profile'),
 
+    # Google Calendar Integration URLs
+    path('calendar/authorize/', GoogleCalendarAuthorizeView.as_view(), name='google_calendar_authorize'),
+    path('calendar/oauth2/callback/', GoogleCalendarCallbackView.as_view(), name='google_calendar_callback'),
+    path('calendar/disconnect/', GoogleCalendarDisconnectView.as_view(), name='google_calendar_disconnect'),
+    path('calendar/status/', CalendarStatusAPIView.as_view(), name='google_calendar_status'),
 ]

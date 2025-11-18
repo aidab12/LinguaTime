@@ -1,14 +1,12 @@
-import os
-import pickle
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional, List, Dict
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from django.conf import settings
+
+from apps.models import GoogleCalendarCredentials, Interpreter
 
 
 class GoogleCalendarService:
@@ -20,35 +18,71 @@ class GoogleCalendarService:
             user_id: ID пользователя (переводчика) для хранения токенов
         """
         self.user_id = user_id
-        self.token_path = settings.GOOGLE_CALENDAR_TOKEN_DIR / f'token_{user_id}.pickle'
         self.creds = None
         self.service = None
 
     def get_credentials(self) -> Optional[Credentials]:
-        """Получение или обновление credentials"""
-        # Загружаем сохранённый токен
-        if self.token_path.exists():
-            with open(self.token_path, 'rb') as token:
-                self.creds = pickle.load(token)
+        """Получение или обновление credentials из базы данных"""
+        try:
+            interpreter = Interpreter.objects.get(id=self.user_id)
+            creds_db = interpreter.google_calendar_credentials
+            
+            self.creds = Credentials(
+                token=creds_db.token,
+                refresh_token=creds_db.refresh_token,
+                token_uri=creds_db.token_uri,
+                client_id=creds_db.client_id,
+                client_secret=creds_db.client_secret,
+                scopes=creds_db.scopes.split(' ')
+            )
 
-        # Если токен истёк, обновляем его
-        if self.creds and self.creds.expired and self.creds.refresh_token:
-            try:
-                self.creds.refresh(Request())
-                self._save_credentials()
-            except Exception as e:
-                print(f"Error refreshing token: {e}")
-                return None
+            # Если токен истёк, обновляем его
+            if self.creds and self.creds.expired and self.creds.refresh_token:
+                try:
+                    self.creds.refresh(Request())
+                    self._save_credentials() # Сохраняем обновленные токены в БД
+                except Exception as e:
+                    print(f"Error refreshing token for user {self.user_id}: {e}")
+                    # Optionally, mark user as disconnected if refresh fails
+                    interpreter.google_calendar_connected = False
+                    interpreter.save(update_fields=['google_calendar_connected'])
+                    return None
+            
+            return self.creds
 
-        return self.creds
+        except GoogleCalendarCredentials.DoesNotExist:
+            return None
+        except Interpreter.DoesNotExist:
+            return None
+        except Exception as e:
+            print(f"Error loading credentials for user {self.user_id}: {e}")
+            return None
 
     def _save_credentials(self):
-        """Сохранение credentials в файл"""
-        with open(self.token_path, 'wb') as token:
-            pickle.dump(self.creds, token)
+        """Сохранение credentials в базу данных"""
+        if not self.creds:
+            return
+
+        try:
+            interpreter = Interpreter.objects.get(id=self.user_id)
+            GoogleCalendarCredentials.objects.update_or_create(
+                user=interpreter,
+                defaults={
+                    'token': self.creds.token,
+                    'refresh_token': self.creds.refresh_token,
+                    'token_uri': self.creds.token_uri,
+                    'client_id': self.creds.client_id,
+                    'client_secret': self.creds.client_secret,
+                    'scopes': ' '.join(self.creds.scopes),
+                }
+            )
+        except Interpreter.DoesNotExist:
+            print(f"Interpreter with ID {self.user_id} not found for saving credentials.")
+        except Exception as e:
+            print(f"Error saving credentials for user {self.user_id}: {e}")
 
     def save_credentials_from_flow(self, credentials: Credentials):
-        """Сохранение credentials после OAuth flow"""
+        """Сохранение credentials после OAuth flow в базу данных"""
         self.creds = credentials
         self._save_credentials()
 
@@ -222,43 +256,49 @@ class GoogleCalendarService:
     def check_availability(self, start_time: datetime,
                            end_time: datetime) -> bool:
         """
-        Проверка доступности в указанный период
+        Проверка доступности в указанный период с использованием freebusy API.
 
         Returns:
             True если свободен, False если занят
         """
-        events = self.list_events(
-            time_min=start_time,
-            time_max=end_time,
-            max_results=100
-        )
+        service = self.get_service()
 
-        # Если есть события в этот период, значит занят
-        return len(events) == 0
+        body = {
+            "timeMin": start_time.isoformat() + "Z",
+            "timeMax": end_time.isoformat() + "Z",
+            "items": [{"id": "primary"}]
+        }
 
-    def get_busy_times(self, start_time: datetime,
-                       end_time: datetime) -> List[Dict]:
+        try:
+            events_result = service.freebusy().query(body=body).execute()
+            # Если список busy пуст, значит свободен
+            return not events_result['calendars']['primary']['busy']
+        except HttpError as error:
+            print(f'An error occurred while checking availability: {error}')
+            raise
+
+    def get_user_availability(self, time_min: datetime, time_max: datetime) -> List[Dict]:
         """
-        Получение списка занятых периодов
+        Получение занятых слотов пользователя с использованием freebusy API.
+
+        Args:
+            time_min: Начало периода
+            time_max: Конец периода
 
         Returns:
-            List[Dict] с периодами {'start': datetime, 'end': datetime}
+            List[Dict] с периодами {'start': str, 'end': str} в ISO формате
         """
-        events = self.list_events(
-            time_min=start_time,
-            time_max=end_time,
-            max_results=100
-        )
+        service = self.get_service()
 
-        busy_times = []
-        for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
-            end = event['end'].get('dateTime', event['end'].get('date'))
+        body = {
+            "timeMin": time_min.isoformat() + "Z",
+            "timeMax": time_max.isoformat() + "Z",
+            "items": [{"id": "primary"}]  # Проверяем основной календарь
+        }
 
-            busy_times.append({
-                'start': datetime.fromisoformat(start.replace('Z', '+00:00')),
-                'end': datetime.fromisoformat(end.replace('Z', '+00:00')),
-                'summary': event.get('summary', 'Busy')
-            })
-
-        return busy_times
+        try:
+            events_result = service.freebusy().query(body=body).execute()
+            return events_result['calendars']['primary']['busy']
+        except HttpError as error:
+            print(f'An error occurred while fetching freebusy: {error}')
+            raise

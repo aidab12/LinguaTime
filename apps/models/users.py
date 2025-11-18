@@ -7,6 +7,8 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import UUIDBaseModel, CreatedBaseModel
 
+from apps.models.availabilitys import Availability
+from datetime import datetime, timedelta
 
 class UserManager(BaseUserManager):
 
@@ -55,6 +57,7 @@ class Interpreter(User, CreatedBaseModel):
     gender = CharField(_("Gender"), max_length=6, choices=GenderType.choices)
     is_ready_for_trips = BooleanField(default=False)
     is_moderated = BooleanField(_('Passed moderation'), default=False)
+    google_calendar_connected = BooleanField(default=False) # New field
 
     # Relations
     language = ManyToManyField('apps.Language', verbose_name=_("Languages"))
@@ -64,6 +67,43 @@ class Interpreter(User, CreatedBaseModel):
     class Meta:
         verbose_name = _('Interpreter')
         verbose_name_plural = _('Interpreters')
+
+    def sync_availability_from_calendar(self):
+        """
+        Синхронизирует доступность переводчика из Google Calendar.
+        """
+        from apps.services.google_calendar import GoogleCalendarService
+        if not self.google_calendar_connected:
+            return
+
+        calendar_service = GoogleCalendarService(str(self.id))
+        if not calendar_service.is_authorized():
+            # Если токен недействителен, помечаем как отключенный
+            self.google_calendar_connected = False
+            self.save(update_fields=['google_calendar_connected'])
+            return
+
+        # Определяем диапазон для синхронизации (например, на ближайшие 3 месяца)
+        now = datetime.utcnow()
+        time_min = now
+        time_max = now + timedelta(days=90)
+
+        busy_slots = calendar_service.get_user_availability(time_min, time_max)
+
+        # Удаляем старые записи доступности, синхронизированные из Google Calendar
+        Availability.objects.filter(interpreter=self, is_google_calendar_event=True).delete()
+
+        # Создаем новые записи доступности на основе занятых слотов
+        for slot in busy_slots:
+            start = datetime.fromisoformat(slot['start'][:-1]) # Remove 'Z' for timezone-naive datetime
+            end = datetime.fromisoformat(slot['end'][:-1]) # Remove 'Z' for timezone-naive datetime
+            Availability.objects.create(
+                interpreter=self,
+                start_time=start,
+                end_time=end,
+                is_available=False, # Занято
+                is_google_calendar_event=True
+            )
 
 
 class Client(User):
