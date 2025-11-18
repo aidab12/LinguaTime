@@ -27,7 +27,6 @@ class Booking(CreatedBaseModel):
     rate = DecimalField(_('Ставка для переводчика'), max_digits=10, decimal_places=2)
 
     class Meta:
-        db_table = 'bookings'
         verbose_name = _('Бронирование')
         verbose_name_plural = _('Бронирования')
         unique_together = ['order', 'interpreter']  # чтобы не было дубликатов предложений

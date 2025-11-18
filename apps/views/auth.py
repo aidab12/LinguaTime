@@ -7,13 +7,14 @@ from django.views.generic import CreateView, FormView
 
 from apps.forms import RegisterClientModelForm, RegisterInterpreterModelForm, LoginForm
 from apps.models import Interpreter, City, Language
+from apps.models.languages import TranslationType
 from apps.views.mixins import LoginNotRequiredMixin
 
 
 class LoginView(LoginNotRequiredMixin, FormView):
     template_name = 'apps/auth/login.html'
     form_class = LoginForm
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('client_dashboard')
     redirect_authenticated_user = True
 
     def form_valid(self, form):
@@ -22,19 +23,21 @@ class LoginView(LoginNotRequiredMixin, FormView):
 
         if user_type == 'interpreter':
             return redirect('interpreter_profile')
-        return redirect('apps:dashboard')
+        return redirect('client_dashboard')
 
 
-class RegisterCreateView(CreateView):
+class RegisterCreateView(LoginNotRequiredMixin, CreateView):
     """Регистрация обычных клиентов"""
     template_name = 'apps/auth/signup.html'
     form_class = RegisterClientModelForm
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('client_dashboard')
+    redirect_authenticated_user = True
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['cities'] = City.objects.all()
         ctx['languages'] = Language.objects.all()
+        ctx['translation_types'] = TranslationType.objects.all()
         return ctx
 
     def form_valid(self, form):
@@ -48,12 +51,13 @@ class RegisterCreateView(CreateView):
         return super().form_invalid(form)
 
 
-class RegisterInterpreterCreateView(CreateView):
+class RegisterInterpreterCreateView(LoginNotRequiredMixin, CreateView):
     """Регистрация переводчиков"""
     model = Interpreter
     form_class = RegisterInterpreterModelForm
     template_name = 'apps/auth/signup.html'
-    success_url = reverse_lazy('interpreter_signup')
+    success_url = reverse_lazy('interpreter_profile')
+    redirect_authenticated_user = True
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 
-from apps.models import Interpreter, Client, Order, Booking, User, Review, Country, Region, City, Language, Availability, OrderInterpreter
+from apps.models import Interpreter, Client, Order, Booking, User, Review, Country, Region, City, Language, \
+    Availability, OrderInterpreter
+from apps.models.languages import TranslationType, LanguagePair
 
 
 @admin.register(Interpreter)
@@ -61,4 +63,14 @@ class AvailabilityModelAdmin(ModelAdmin):
 
 @admin.register(OrderInterpreter)
 class OrderInterpreterModelAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(TranslationType)
+class TranslationTypeModelAdmin(ModelAdmin):
+    pass
+
+
+@admin.register(LanguagePair)
+class LanguagePairModelAdmin(ModelAdmin):
     pass

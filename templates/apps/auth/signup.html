@@ -26,7 +26,7 @@
             <button type="button" class="tab-button" data-type="interpreter">Interpreter</button>
         </div>
 
-        <form id="registration-form" method="post" action="{% url 'apps:client_signup' %}">
+        <form id="registration-form" method="post" action="{% url 'client_signup' %}">
             {% csrf_token %}
             <div class="form-field">
                 <label for="first-name">First Name<span class="required">*</span></label>
@@ -91,7 +91,10 @@
                     <label for="city">City <span class="required">*</span></label>
                     <select name="city" id="city">
                         {% for city in cities %}
-                            <option value="{{ city.id }}">{{ city.name }}</option>
+                            <option value="{{ city.id }}"
+                                {% if city.name == 'Tashkent' %}selected{% endif %}>
+                                {{ city.name }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -150,7 +153,7 @@
 
         <div class="auth-link">
             <p>Already have an account?
-                <a href="{% url 'apps:login' %}">Sign In</a>
+                <a href="{% url 'login_page' %}">Sign In</a>
             </p>
         </div>
     </div>
@@ -161,8 +164,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const registrationForm = document.getElementById('registration-form');
     const interpreterFields = document.getElementById('interpreter-fields');
-    const clientSignupUrl = "{% url 'apps:client_signup' %}";
-    const interpreterSignupUrl = "{% url 'apps:interpreter_signup' %}";
+    const clientSignupUrl = "{% url 'client_signup' %}";
+    const interpreterSignupUrl = "{% url 'interpreter_signup' %}";
 
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {

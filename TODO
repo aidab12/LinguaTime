@@ -27,3 +27,4 @@ TASK
 3. login page larni togrilash +
 4. logout ni qilish +
 5. page larni bir biriga otadigan qilish (dashboard dagi)
+6. email only model Client, Interpreter unique=True ?

@@ -35,7 +35,7 @@
             <button type="button" class="tab-button" data-type="interpreter">Interpreter</button>
         </div>
 
-        <form method="post" action="{% url 'apps:login' %}">
+        <form method="post" action="{% url 'login_page' %}">
             {% csrf_token %}
             <input type="hidden" name="user_type" id="user_type" value="client">
 
@@ -85,7 +85,7 @@
         </button>
 
         <div class="auth-link">
-            <p>No account? <a id="signup-link" href="{% url 'apps:client_signup' %}">Sign up</a></p>
+            <p>No account? <a id="signup-link" href="{% url 'client_signup' %}">Sign up</a></p>
         </div>
     </div>
 </div>
@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const hiddenInput = document.getElementById('user_type');
     const signupLink = document.getElementById('signup-link');
-    const signupBaseUrl = "{% url 'apps:client_signup' %}";
-    const interpreterSignupUrl = "{% url 'apps:interpreter_signup' %}";
+    const signupBaseUrl = "{% url 'client_signup' %}";
+    const interpreterSignupUrl = "{% url 'interpreter_signup' %}";
 
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {

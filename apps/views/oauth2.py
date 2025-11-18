@@ -1,58 +1,166 @@
 import secrets
 import urllib.parse
+import logging
 
 import requests
 from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import redirect
+from django.views import View
+from django.conf import settings
 
 from apps.models import Interpreter, Client
-from root import settings
+
+logger = logging.getLogger(__name__)
 
 
-def google_login(request):
-    """Инициирует процесс авторизации через Google."""
+class GoogleLoginView(View):
+    """
+    Инициирует процесс авторизации через Google OAuth 2.0.
 
-    # Генерируем случайный state для защиты от CSRF
-    state = secrets.token_urlsafe(32)
-    request.session['oauth_state'] = state
+    GET параметры:
+        user_type (str, optional): 'interpreter' или 'client'. По умолчанию 'client'
+    """
 
-    # Сохраняем тип пользователя из параметра запроса (если передан)
-    user_type = request.GET.get('user_type', 'client')
-    request.session['oauth_user_type'] = user_type
-
-    scope = "email profile"
-    auth_url = (
-        f"https://accounts.google.com/o/oauth2/auth?response_type=code"
-        f"&client_id={settings.GOOGLE_CLIENT_ID}"
-        f"&redirect_uri={urllib.parse.quote(settings.GOOGLE_REDIRECT_URI)}"
-        f"&scope={urllib.parse.quote(scope)}"
-        f"&state={state}"
+    OAUTH_SCOPE = (
+        "https://www.googleapis.com/auth/userinfo.email "
+        "https://www.googleapis.com/auth/userinfo.profile "
+        # "https://www.googleapis.com/auth/calendar"
     )
-    return redirect(auth_url)
+
+    GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/auth"
+
+    def get(self, request):
+        """Генерирует URL для авторизации и редиректит пользователя."""
+
+        # Генерируем CSRF-токен для защиты
+        state = self._generate_state()
+        request.session['oauth_state'] = state
+
+        # Сохраняем тип пользователя
+        user_type = self._get_user_type(request)
+        request.session['oauth_user_type'] = user_type
+
+        # Строим URL для авторизации
+        auth_url = self._build_auth_url(state)
+
+        return redirect(auth_url)
+
+    def _generate_state(self):
+        """Генерирует случайный state-токен для защиты от CSRF."""
+        return secrets.token_urlsafe(32)
+
+    def _get_user_type(self, request):
+        """Извлекает и валидирует тип пользователя из запроса."""
+        user_type = request.GET.get('user_type', 'client')
+        # Валидация: только допустимые типы
+        return user_type if user_type in ['client', 'interpreter'] else 'client'
+
+    def _build_auth_url(self, state):
+        """Создаёт URL для редиректа на Google OAuth."""
+        params = {
+            'response_type': 'code',
+            'client_id': settings.GOOGLE_CLIENT_ID,
+            'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+            'scope': self.OAUTH_SCOPE,
+            'state': state,
+        }
+
+        query_string = urllib.parse.urlencode(params)
+        return f"{self.GOOGLE_AUTH_URL}?{query_string}"
 
 
-def google_callback(request):
+class GoogleCallbackView(View):
     """
     Обрабатывает callback от Google после успешной авторизации.
-    Создаёт или получает пользователя и авторизует его.
+    Создаёт/получает пользователя и выполняет вход в систему.
     """
-    # 1. Проверяем state для защиты от CSRF
-    received_state = request.GET.get("state")
-    saved_state = request.session.get('oauth_state')
 
-    if not received_state or received_state != saved_state:
-        messages.error(request, "Invalid authentication request. Please try again.")
-        return redirect('interpreter_signup')
+    TOKEN_URL = "https://oauth2.googleapis.com/token"
+    USERINFO_URL = "https://www.googleapis.com/oauth2/v1/userinfo"
 
-    # 2. Получаем authorization code
-    code = request.GET.get("code")
-    if not code:
-        messages.error(request, "Authorization failed. Please try again.")
-        return redirect('interpreter_signup')
+    # Таймаут для HTTP-запросов
+    REQUEST_TIMEOUT = 10
 
-    try:
-        # 3. Обмениваем code на access token
+    # Маппинг типов пользователей на модели и URL
+    USER_TYPE_CONFIG = {
+        'interpreter': {
+            'model': Interpreter,
+            'success_url': 'interpreter_profile',
+            'error_url': 'interpreter_signup',
+        },
+        'client': {
+            'model': Client,
+            'success_url': 'client_dashboard',
+            'error_url': 'login_page',
+        }
+    }
+
+    def get(self, request):
+        """Основной обработчик callback от Google."""
+
+        # 1. Валидация state (защита от CSRF)
+        if not self._validate_state(request):
+            messages.error(request, "Invalid authentication request. Please try again.")
+            return redirect('interpreter_signup')
+
+        # 2. Получение authorization code
+        code = request.GET.get("code")
+        if not code:
+            messages.error(request, "Authorization failed. Please try again.")
+            return redirect('interpreter_signup')
+
+        try:
+            # 3. Обмен code на access token
+            access_token = self._exchange_code_for_token(code)
+
+            # 4. Получение информации о пользователе
+            user_info = self._fetch_user_info(access_token)
+
+            # 5. Создание/получение пользователя
+            user, created = self._get_or_create_user(request, user_info)
+
+            # 6. Авторизация пользователя
+            self._login_user(request, user, created)
+
+            # 7. Очистка сессии и редирект
+            return self._cleanup_and_redirect(request, user)
+
+        except requests.RequestException:
+            messages.error(request, "Failed to connect to Google. Please try again.")
+            logger.error("Google OAuth connection error", exc_info=True)
+            return redirect('interpreter_signup')
+
+        except ValueError as e:
+            messages.error(request, f"Authentication error: {str(e)}")
+            logger.error(f"Google OAuth validation error: {str(e)}", exc_info=True)
+            return redirect('interpreter_signup')
+
+        except Exception as e:
+            messages.error(request, "An unexpected error occurred. Please try again.")
+            logger.error(f"Unexpected Google OAuth error: {str(e)}", exc_info=True)
+            return redirect('interpreter_signup')
+
+    def _validate_state(self, request):
+        """Проверяет state-токен для защиты от CSRF-атак."""
+        received_state = request.GET.get("state")
+        saved_state = request.session.get('oauth_state')
+        return received_state and received_state == saved_state
+
+    def _exchange_code_for_token(self, code):
+        """
+        Обменивает authorization code на access token.
+
+        Args:
+            code (str): Authorization code от Google
+
+        Returns:
+            str: Access token
+
+        Raises:
+            requests.RequestException: При ошибке HTTP-запроса
+            ValueError: Если токен не получен
+        """
         token_data = {
             "code": code,
             "client_id": settings.GOOGLE_CLIENT_ID,
@@ -61,88 +169,122 @@ def google_callback(request):
             "grant_type": "authorization_code",
         }
 
-        token_res = requests.post(
-            "https://oauth2.googleapis.com/token",
+        response = requests.post(
+            self.TOKEN_URL,
             data=token_data,
-            timeout=10  # Добавляем timeout
+            timeout=self.REQUEST_TIMEOUT
         )
-        token_res.raise_for_status()
-        token_json = token_res.json()
+        response.raise_for_status()
+
+        token_json = response.json()
         access_token = token_json.get("access_token")
 
         if not access_token:
-            raise ValueError("No access token received")
+            raise ValueError("No access token received from Google")
 
-        # 4. Получаем информацию о пользователе
-        user_info_res = requests.get(
-            "https://www.googleapis.com/oauth2/v1/userinfo",
-            headers={"Authorization": f"Bearer {access_token}"},
-            timeout=10
+        return access_token
+
+    def _fetch_user_info(self, access_token):
+        """
+        Получает информацию о пользователе от Google.
+
+        Args:
+            access_token (str): Access token для API
+
+        Returns:
+            dict: Информация о пользователе
+
+        Raises:
+            requests.RequestException: При ошибке HTTP-запроса
+            ValueError: Если обязательные поля отсутствуют
+        """
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        response = requests.get(
+            self.USERINFO_URL,
+            headers=headers,
+            timeout=self.REQUEST_TIMEOUT
         )
-        user_info_res.raise_for_status()
-        info = user_info_res.json()
+        response.raise_for_status()
 
-        email = info.get("email")
-        google_id = info.get("id")
-        first_name = info.get("given_name", "")
-        last_name = info.get("family_name", "")
+        user_info = response.json()
 
-        if not email or not google_id:
-            raise ValueError("Email or Google ID not provided")
+        # Валидация обязательных полей
+        if not user_info.get("email") or not user_info.get("id"):
+            raise ValueError("Email or Google ID not provided by Google")
 
+        return user_info
+
+    def _get_or_create_user(self, request, user_info):
+        """
+        Создаёт нового пользователя или получает существующего.
+
+        Args:
+            request: HTTP request объект
+            user_info (dict): Информация о пользователе от Google
+
+        Returns:
+            tuple: (user_instance, created_flag)
+        """
+        email = user_info.get("email")
+        first_name = user_info.get("given_name", "")
+        last_name = user_info.get("family_name", "")
+
+        # Определяем тип пользователя и соответствующую модель
         user_type = request.session.get('oauth_user_type', 'client')
+        config = self.USER_TYPE_CONFIG.get(user_type, self.USER_TYPE_CONFIG['client'])
 
-        # 6. Создаём или получаем пользователя
-        if user_type == 'interpreter':
-            user, created = Interpreter.objects.get_or_create(
-                email=email,  # Используем email как уникальный идентификатор
-                defaults={
+        UserModel = config['model']
 
-                    "first_name": first_name,
-                    "last_name": last_name,
-                }
-            )
-            success_url = 'interpreter_profile'
-        else:
-            # Предполагаем, что у вас есть модель Client
-            user, created = Client.objects.get_or_create(
-                email=email,
-                defaults={
+        # Создаём или получаем пользователя
+        user, created = UserModel.objects.get_or_create(
+            email=email,
+            defaults={
+                "first_name": first_name,
+                "last_name": last_name,
+            }
+        )
 
-                    "first_name": first_name,
-                    "last_name": last_name,
-                }
-            )
-            success_url = 'dashboard'
-
-        # 7. Устанавливаем непригодный пароль (пользователь использует Google)
+        # Для новых пользователей устанавливаем непригодный пароль
         if created:
             user.set_unusable_password()
             user.save()
+
+        return user, created
+
+    def _login_user(self, request, user, created):
+        """
+        Авторизует пользователя в системе и показывает соответствующее сообщение.
+
+        Args:
+            request: HTTP request объект
+            user: Экземпляр пользователя
+            created (bool): Флаг создания нового пользователя
+        """
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        if created:
             messages.success(request, "Account created successfully!")
         else:
             messages.success(request, "Welcome back!")
 
-        # 8. Авторизуем пользователя
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    def _cleanup_and_redirect(self, request, user):
+        """
+        Очищает сессию и перенаправляет на соответствующую страницу.
 
-        # 9. Очищаем сессию
+        Args:
+            request: HTTP request объект
+            user: Экземпляр пользователя
+
+        Returns:
+            HttpResponseRedirect
+        """
+        # Очищаем OAuth данные из сессии
         request.session.pop('oauth_state', None)
-        request.session.pop('oauth_user_type', None)
+        user_type = request.session.pop('oauth_user_type', 'client')
+
+        # Определяем URL для редиректа
+        config = self.USER_TYPE_CONFIG.get(user_type, self.USER_TYPE_CONFIG['client'])
+        success_url = config['success_url']
 
         return redirect(success_url)
-
-    except requests.RequestException as e:
-        messages.error(request, "Failed to connect to Google. Please try again.")
-        return redirect('interpreter_signup')
-    except ValueError as e:
-        messages.error(request, f"Authentication error: {str(e)}")
-        return redirect('interpreter_signup')
-    except Exception as e:
-        # Логируем ошибку для отладки
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"Google OAuth error: {str(e)}", exc_info=True)
-
-        messages.error(request, "An unexpected error occurred. Please try again.")
-        return redirect('interpreter_signup')

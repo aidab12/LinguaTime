@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # My apps
-    'apps',
+    'apps.apps.AppsConfig',
 
     # Third-Party apps
     'django_filters',
@@ -39,7 +39,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -105,21 +104,10 @@ AUTH_USER_MODEL = 'apps.User'
 
 # Internationalization
 
-LANGUAGE_CODE = 'ru'
-
-LANGUAGES = (
-    ('en', 'English'),
-    ('uz', 'Uzbek'),
-    ('ru', 'Russian'),
-)
-
-LOCALE_PATHS = [
-    os.path.join(BASE_DIR, 'locale')
-]
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Asia/Tashkent'
-
-USE_I18N = True
-
+USE_I18N = False
+USE_L10N = False
 USE_TZ = True
 
 STATIC_URL = "static/"
@@ -182,18 +170,39 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GOOGLE_REDIRECT_URI = "http://localhost:8000/auth/oauth2/callback"
 
+# Google Calendar API Configuration (отдельный flow)
+GOOGLE_CALENDAR_REDIRECT_URI = os.getenv(
+    'GOOGLE_CALENDAR_REDIRECT_URI',
+    'http://localhost:8000/auth/google-calendar/callback'
+)
+
+GOOGLE_OAUTH_SCOPES = {
+    'basic': [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile',
+    ],
+    'calendar': [
+        'https://www.googleapis.com/auth/calendar',
+        'https://www.googleapis.com/auth/calendar.events',
+    ]
+}
+
+# Путь для хранения токенов календаря
+GOOGLE_CALENDAR_TOKEN_DIR = BASE_DIR / 'tokens'
+GOOGLE_CALENDAR_TOKEN_DIR.mkdir(exist_ok=True)
+
 JAZZMIN_SETTINGS = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
-    "site_title": "Library Admin",
+    "site_title": "Lingua Time",
 
     # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
-    "site_header": "Library",
+    "site_header": "Lingua",
 
     # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
-    "site_brand": "Library",
+    "site_brand": "Lingua",
 
     # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "books/img/logo.png",
+    "site_logo": "img/logo.png",
 
     # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
     "login_logo": None,
@@ -320,7 +329,7 @@ JAZZMIN_SETTINGS = {
     # override change forms on a per modeladmin basis
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
     # Add a language dropdown into the admin
-    "language_chooser": True,
+    "language_chooser": False,
 }
 
 customColorPalette = [
@@ -349,6 +358,10 @@ customColorPalette = [
         'label': 'Blue'
     },
 ]
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",
+}
 
 CKEDITOR_5_CONFIGS = {
     'default1': {
