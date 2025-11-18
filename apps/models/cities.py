@@ -1,5 +1,6 @@
+from django.db.models import CASCADE, CharField, ForeignKey
+
 from apps.models.base import UUIDBaseModel
-from django.db.models import CharField, ForeignKey, CASCADE
 
 
 class Country(UUIDBaseModel):

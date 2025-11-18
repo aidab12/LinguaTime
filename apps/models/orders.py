@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
-from django.db.models import TextChoices, ForeignKey, PROTECT, DateTimeField, CharField, TextField, \
-    PositiveSmallIntegerField, ManyToManyField, CASCADE
+from django.db.models import (CASCADE, PROTECT, CharField, DateTimeField,
+                              ForeignKey, ManyToManyField,
+                              PositiveSmallIntegerField, TextChoices,
+                              TextField)
 from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import CreatedBaseModel, UUIDBaseModel

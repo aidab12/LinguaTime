@@ -1,14 +1,14 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import (AbstractUser, BaseUserManager,
                                         PermissionsMixin)
-from django.core.validators import MinValueValidator
-from django.db.models import (BooleanField, CharField, EmailField,
-                              TextChoices, ManyToManyField, TextField, ForeignKey, SET_NULL, DecimalField)
+from django.db.models import (SET_NULL, BooleanField, CharField, EmailField,
+                              ForeignKey, ManyToManyField, TextChoices)
 from django.utils.translation import gettext_lazy as _
 
-from apps.models.base import UUIDBaseModel, CreatedBaseModel
-
 from apps.models.availabilitys import Availability
-from datetime import datetime, timedelta
+from apps.models.base import CreatedBaseModel, UUIDBaseModel
+
 
 class UserManager(BaseUserManager):
 
@@ -57,7 +57,7 @@ class Interpreter(User, CreatedBaseModel):
     gender = CharField(_("Gender"), max_length=6, choices=GenderType.choices)
     is_ready_for_trips = BooleanField(default=False)
     is_moderated = BooleanField(_('Passed moderation'), default=False)
-    google_calendar_connected = BooleanField(default=False) # New field
+    google_calendar_connected = BooleanField(default=False)  # New field
 
     # Relations
     language = ManyToManyField('apps.Language', verbose_name=_("Languages"))
@@ -95,13 +95,13 @@ class Interpreter(User, CreatedBaseModel):
 
         # Создаем новые записи доступности на основе занятых слотов
         for slot in busy_slots:
-            start = datetime.fromisoformat(slot['start'][:-1]) # Remove 'Z' for timezone-naive datetime
-            end = datetime.fromisoformat(slot['end'][:-1]) # Remove 'Z' for timezone-naive datetime
+            start = datetime.fromisoformat(slot['start'][:-1])  # Remove 'Z' for timezone-naive datetime
+            end = datetime.fromisoformat(slot['end'][:-1])  # Remove 'Z' for timezone-naive datetime
             Availability.objects.create(
                 interpreter=self,
                 start_time=start,
                 end_time=end,
-                is_available=False, # Занято
+                is_available=False,  # Занято
                 is_google_calendar_event=True
             )
 

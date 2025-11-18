@@ -1,18 +1,17 @@
 from django.urls import path
 
-from apps.views import RegisterInterpreterCreateView, RegisterCreateView, LoginView, \
-    DashboardView, ProfileView, OrdersView, NewOrderView, BillingView, SettingsView
-from apps.views.oauth2 import GoogleLoginView, GoogleCallbackView
+from apps.views import (BillingView, DashboardView, LoginFormView, NewOrderView,
+                        OrdersView, ProfileView, RegisterCreateView,
+                        RegisterInterpreterCreateView, SettingsView)
+from apps.views.google_calendar_oauth import (CalendarStatusAPIView,
+                                              GoogleCalendarAuthorizeView,
+                                              GoogleCalendarCallbackView,
+                                              GoogleCalendarDisconnectView)
+from apps.views.oauth2 import GoogleCallbackView, GoogleLoginView
 from apps.views.profile import InterpreterProfileView
-from apps.views.google_calendar_oauth import (
-    GoogleCalendarAuthorizeView,
-    GoogleCalendarCallbackView,
-    GoogleCalendarDisconnectView,
-    CalendarStatusAPIView
-)
 
 urlpatterns = [
-    path('', LoginView.as_view(), name='login_page'),
+    path('', LoginFormView.as_view(), name='login_page'),
     path('signup/', RegisterInterpreterCreateView.as_view(), name='interpreter_signup'),
     path('signup/client/', RegisterCreateView.as_view(), name='client_signup'),
 

@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError
-from django.db.models import ForeignKey, TextChoices, CASCADE, DateTimeField, CharField, TextField, BooleanField
+from django.db.models import (CASCADE, BooleanField, CharField, DateTimeField,
+                              ForeignKey, TextChoices, TextField)
+from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import CreatedBaseModel
-from django.utils.translation import gettext_lazy as _
 
 
 class Availability(CreatedBaseModel):
@@ -12,19 +13,16 @@ class Availability(CreatedBaseModel):
         AVAILABLE = 'available', _('Доступен')
         BUSY = 'busy', _('Занят')
 
-
     start_datetime = DateTimeField(_('Дата и время начала'))
     end_datetime = DateTimeField(_('Дата и время окончания'))
     type = CharField(_('Тип доступности'), max_length=20, choices=AvailabilityType.choices,
-                     default=AvailabilityType.AVAILABLE
-                     )
+                     default=AvailabilityType.AVAILABLE)
 
     # Интеграция с Google Calendar
     google_event_id = CharField(_('ID события Google Calendar'), max_length=255, blank=True, null=True, unique=True)
     google_sync_token = TextField(_('Токен синхронизации Google'), blank=True, null=True)
     last_synced_at = DateTimeField(_('Последняя синхронизация'), blank=True, null=True)
     is_google_calendar_event = BooleanField(_('Событие из Google Calendar'), default=False)
-
 
     translator = ForeignKey('apps.Interpreter', CASCADE, related_name='availabilities', verbose_name=_('Переводчик'))
 
@@ -44,7 +42,7 @@ class Availability(CreatedBaseModel):
                     'end_datetime': 'Дата окончания должна быть позже даты начала'
                 })
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # TODO remove method
         """Переопределение save для вызова clean()"""
         self.clean()
         super().save(*args, **kwargs)

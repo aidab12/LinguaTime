@@ -1,69 +1,79 @@
 {% extends 'apps/base.html' %}
 {% load static %}
-{% block title %}Billing{% endblock %}
+
+{% block title %}
+    Billing
+{% endblock %}
+
 {% block content %}
     <div id="billing-section" class="section">
-     <div class="glass-card rounded-2xl p-8">
-      <h3 class="text-2xl font-semibold section-title mb-8">Billing Overview</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-       <div class="stat-card rounded-xl p-6 text-center">
-        <div class="text-3xl mb-2">
-         💰
+        <div class="glass-card rounded-2xl p-8">
+            <h3 class="text-2xl font-semibold section-title mb-8">Billing Overview</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card rounded-xl p-6 text-center">
+                    <div class="text-3xl mb-2">
+                        💰
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800">$850</h4>
+                    <p class="text-gray-600">This Month</p>
+                </div>
+                <div class="stat-card rounded-xl p-6 text-center">
+                    <div class="text-3xl mb-2">
+                        📊
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800">$4,200</h4>
+                    <p class="text-gray-600">Total Spent</p>
+                </div>
+                <div class="stat-card rounded-xl p-6 text-center">
+                    <div class="text-3xl mb-2">
+                        ⏱️
+                    </div>
+                    <h4 class="text-2xl font-bold text-gray-800">42</h4>
+                    <p class="text-gray-600">Hours Used</p>
+                </div>
+            </div>
+            <div class="chart-container mb-8">
+                <h4 class="text-lg font-semibold mb-4">Monthly Spending Trend</h4>
+                <div class="flex items-end space-x-3 h-40">
+                    <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-20 flex items-end justify-center">
+                        <span class="text-xs text-white mb-1">$600</span>
+                    </div>
+                    <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-24 flex items-end justify-center">
+                        <span class="text-xs text-white mb-1">$750</span>
+                    </div>
+                    <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-32 flex items-end justify-center">
+                        <span class="text-xs text-white mb-1">$850</span>
+                    </div>
+                    <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-28 flex items-end justify-center">
+                        <span class="text-xs text-white mb-1">$800</span>
+                    </div>
+                </div>
+                <div class="flex space-x-3 mt-2 text-xs text-gray-500"><span class="w-12 text-center">Jan</span> <span
+                        class="w-12 text-center">Feb</span> <span class="w-12 text-center">Mar</span> <span
+                        class="w-12 text-center">Apr</span>
+                </div>
+            </div>
+            <div class="glass-card rounded-xl p-6">
+                <h4 class="text-lg font-semibold mb-4">Payment Methods</h4>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-6 bg-blue-500 rounded mr-3"></div>
+                            <div>
+                                <p class="font-medium">Visa ending in 4242</p>
+                                <p class="text-sm text-gray-600">Expires 12/2025</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="secondary-btn px-3 py-1 rounded text-xs">Edit</button>
+                            <button class="text-red-500 px-3 py-1 rounded text-xs">Remove</button>
+                        </div>
+                    </div>
+                    <button class="secondary-btn w-full px-4 py-3 rounded-lg flex items-center justify-center">
+                        <span class="mr-2">+</span> Add Payment Method
+                    </button>
+                </div>
+            </div>
         </div>
-        <h4 class="text-2xl font-bold text-gray-800">$850</h4>
-        <p class="text-gray-600">This Month</p>
-       </div>
-       <div class="stat-card rounded-xl p-6 text-center">
-        <div class="text-3xl mb-2">
-         📊
-        </div>
-        <h4 class="text-2xl font-bold text-gray-800">$4,200</h4>
-        <p class="text-gray-600">Total Spent</p>
-       </div>
-       <div class="stat-card rounded-xl p-6 text-center">
-        <div class="text-3xl mb-2">
-         ⏱️
-        </div>
-        <h4 class="text-2xl font-bold text-gray-800">42</h4>
-        <p class="text-gray-600">Hours Used</p>
-       </div>
-      </div>
-      <div class="chart-container mb-8">
-       <h4 class="text-lg font-semibold mb-4">Monthly Spending Trend</h4>
-       <div class="flex items-end space-x-3 h-40">
-        <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-20 flex items-end justify-center"><span class="text-xs text-white mb-1">$600</span>
-        </div>
-        <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-24 flex items-end justify-center"><span class="text-xs text-white mb-1">$750</span>
-        </div>
-        <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-32 flex items-end justify-center"><span class="text-xs text-white mb-1">$850</span>
-        </div>
-        <div class="bg-gradient-to-t from-green-400 to-green-600 rounded-t w-12 h-28 flex items-end justify-center"><span class="text-xs text-white mb-1">$800</span>
-        </div>
-       </div>
-       <div class="flex space-x-3 mt-2 text-xs text-gray-500"><span class="w-12 text-center">Jan</span> <span class="w-12 text-center">Feb</span> <span class="w-12 text-center">Mar</span> <span class="w-12 text-center">Apr</span>
-       </div>
-      </div>
-      <div class="glass-card rounded-xl p-6">
-       <h4 class="text-lg font-semibold mb-4">Payment Methods</h4>
-       <div class="space-y-4">
-        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-         <div class="flex items-center">
-          <div class="w-10 h-6 bg-blue-500 rounded mr-3"></div>
-          <div>
-           <p class="font-medium">Visa ending in 4242</p>
-           <p class="text-sm text-gray-600">Expires 12/2025</p>
-          </div>
-         </div>
-         <div class="flex space-x-2">
-          <button class="secondary-btn px-3 py-1 rounded text-xs">Edit</button>
-          <button class="text-red-500 px-3 py-1 rounded text-xs">Remove</button>
-         </div>
-        </div>
-        <button class="secondary-btn w-full px-4 py-3 rounded-lg flex items-center justify-center">
-         <span class="mr-2">+</span> Add Payment Method
-        </button>
-       </div>
-      </div>
-     </div>
     </div>
- {% endblock %}
+{% endblock %}

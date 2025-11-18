@@ -1,12 +1,8 @@
 from django.db import models
-from django.conf import settings
 
-class GoogleCalendarCredentials(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='google_calendar_credentials'
-    )
+
+class GoogleCalendarCredentials(models.Model):  # TODO change import style
+    user = models.OneToOneField('apps.User', models.CASCADE, related_name='google_calendar_credentials')
     token = models.CharField(max_length=255)
     refresh_token = models.CharField(max_length=255, null=True, blank=True)
     token_uri = models.CharField(max_length=255)

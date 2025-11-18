@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UsernameField
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.forms import Form, CharField, ModelForm, EmailField, PasswordInput, CheckboxSelectMultiple, EmailInput, \
-    HiddenInput
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.forms import (CharField, CheckboxSelectMultiple, EmailField,
+                          EmailInput, Form, HiddenInput, ModelForm,
+                          PasswordInput)
 
-from apps.models import Interpreter, Client
+from apps.models import Client, Interpreter
 
 
 class LoginForm(Form):
@@ -30,7 +31,6 @@ class LoginForm(Form):
     )
     user_type = CharField(widget=HiddenInput())
 
-
     def clean(self):
         cleaned_data = super().clean()
         email = cleaned_data.get('email')
@@ -44,7 +44,6 @@ class LoginForm(Form):
 
         if user is None:
             raise ValidationError("Invalid email or password")
-
 
         if user_type == 'client':
             try:
@@ -116,7 +115,7 @@ class RegisterClientModelForm(ModelForm):
 
 class RegisterInterpreterModelForm(ModelForm):
     """Форма для регистрации переводчиков"""
-    password = CharField(max_length=128,widget=PasswordInput())
+    password = CharField(max_length=128, widget=PasswordInput())
     confirm_password = CharField(max_length=128, widget=PasswordInput())
 
     class Meta:

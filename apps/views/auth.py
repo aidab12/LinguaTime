@@ -1,17 +1,16 @@
 from django.contrib import messages
-from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView
 
-from apps.forms import RegisterClientModelForm, RegisterInterpreterModelForm, LoginForm
-from apps.models import Interpreter, City, Language
-from apps.models.languages import TranslationType
+from apps.forms import (LoginForm, RegisterClientModelForm,
+                        RegisterInterpreterModelForm)
+from apps.models import City, Interpreter, Language, TranslationType
 from apps.views.mixins import LoginNotRequiredMixin
 
 
-class LoginView(LoginNotRequiredMixin, FormView):
+class LoginFormView(LoginNotRequiredMixin, FormView):
     template_name = 'apps/auth/login.html'
     form_class = LoginForm
     success_url = reverse_lazy('client_dashboard')

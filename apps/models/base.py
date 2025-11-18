@@ -1,13 +1,9 @@
-import os
 import uuid
-from datetime import datetime
 
-from django.db.models import (CharField, DateTimeField, Func, ImageField,
-                              Model, PositiveSmallIntegerField, SlugField,
+from django.db.models import (CharField, DateTimeField, Func, Model,
+                              PositiveSmallIntegerField, SlugField,
                               TextChoices, URLField, UUIDField)
 from django.utils.text import slugify
-
-MAX_CHAR_LENGTH = 155
 
 
 class GenRandomUUID(Func):

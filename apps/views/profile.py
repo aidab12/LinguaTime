@@ -1,8 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
-from apps.models import Client, City, Language
-from apps.models.languages import TranslationType, LanguagePair
+from apps.models import City, Client, LanguagePair, TranslationType
 
 
 class InterpreterProfileView(LoginRequiredMixin, TemplateView):
@@ -52,9 +51,6 @@ class NewOrderView(LoginRequiredMixin, TemplateView):
         ctx['language_pairs'] = LanguagePair.objects.all()
         ctx['translation_types'] = TranslationType.objects.all()
         return ctx
-
-
-
 
 
 class BillingView(LoginRequiredMixin, TemplateView):

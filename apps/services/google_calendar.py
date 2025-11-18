@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -26,7 +26,7 @@ class GoogleCalendarService:
         try:
             interpreter = Interpreter.objects.get(id=self.user_id)
             creds_db = interpreter.google_calendar_credentials
-            
+
             self.creds = Credentials(
                 token=creds_db.token,
                 refresh_token=creds_db.refresh_token,
@@ -40,14 +40,14 @@ class GoogleCalendarService:
             if self.creds and self.creds.expired and self.creds.refresh_token:
                 try:
                     self.creds.refresh(Request())
-                    self._save_credentials() # Сохраняем обновленные токены в БД
+                    self._save_credentials()  # Сохраняем обновленные токены в БД
                 except Exception as e:
                     print(f"Error refreshing token for user {self.user_id}: {e}")
                     # Optionally, mark user as disconnected if refresh fails
                     interpreter.google_calendar_connected = False
                     interpreter.save(update_fields=['google_calendar_connected'])
                     return None
-            
+
             return self.creds
 
         except GoogleCalendarCredentials.DoesNotExist:

@@ -1,6 +1,7 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models import CASCADE, ForeignKey, PositiveSmallIntegerField, TextField, TextChoices, DecimalField, \
-    CharField, DateTimeField
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import (CASCADE, CharField, DateTimeField, DecimalField,
+                              ForeignKey, PositiveSmallIntegerField,
+                              TextChoices, TextField)
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 

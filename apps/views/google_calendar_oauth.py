@@ -10,8 +10,8 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
 
-from apps.models import GoogleCalendarCredentials  # Import GoogleCalendarCredentials
-from apps.models import Interpreter
+from apps.models import (  # Import GoogleCalendarCredentials
+    GoogleCalendarCredentials, Interpreter)
 from apps.services.google_calendar import GoogleCalendarService
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,6 @@ class GoogleCalendarAuthorizeView(LoginRequiredMixin, View):
                 request.user.google_calendar_connected = False
                 request.user.save(update_fields=['google_calendar_connected'])
                 messages.warning(request, "Your Google Calendar connection needs to be re-authorized.")
-
 
         # Генерируем state для CSRF защиты
         state = secrets.token_urlsafe(32)
@@ -153,11 +152,7 @@ class GoogleCalendarCallbackView(LoginRequiredMixin, View):
         saved_state = request.session.get('google_calendar_state')
         saved_user_id = request.session.get('google_calendar_user_id')
 
-        return (
-                received_state
-                and received_state == saved_state
-                and saved_user_id == str(request.user.id)
-        )
+        return received_state and received_state == saved_state and saved_user_id == str(request.user.id)
 
     def _exchange_code_for_tokens(self, code):
         """
@@ -200,11 +195,11 @@ class GoogleCalendarCallbackView(LoginRequiredMixin, View):
             user=user,
             defaults={
                 'token': tokens['access_token'],
-                'refresh_token': tokens.get('refresh_token'), # Use .get() as refresh_token might not always be present
-                'token_uri': self.TOKEN_URL, # This should be the token exchange endpoint
+                'refresh_token': tokens.get('refresh_token'),
+                'token_uri': self.TOKEN_URL,
                 'client_id': settings.GOOGLE_CLIENT_ID,
                 'client_secret': settings.GOOGLE_CLIENT_SECRET,
-                'scopes': ' '.join(settings.GOOGLE_OAUTH_SCOPES['calendar']),
+                'scopes': ' '.join(settings.GOOGLE_OAUTH_SCOPES['calendar'])
             }
         )
 

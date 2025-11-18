@@ -1,15 +1,15 @@
+import logging
 import secrets
 import urllib.parse
-import logging
 
 import requests
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import View
-from django.conf import settings
 
-from apps.models import Interpreter, Client
+from apps.models import Client, Interpreter
 
 logger = logging.getLogger(__name__)
 

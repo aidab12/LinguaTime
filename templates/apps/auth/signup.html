@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Form</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/css/auth.css' %}">
 </head>
 <body>
 <div class="form-container">
@@ -31,8 +31,9 @@
             <div class="form-field">
                 <label for="first-name">First Name<span class="required">*</span></label>
                 <input type="text" name="first_name" id="first-name" required>
-                 {% if form.first_name.errors %}
-                    <div class="field-error">{% for error in form.first_name.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                {% if form.first_name.errors %}
+                    <div class="field-error">{% for error in form.first_name.errors %}
+                        <span>{{ error }}</span>{% endfor %}</div>
                 {% endif %}
             </div>
 
@@ -40,7 +41,8 @@
                 <label for="last-name">Last Name <span class="required">*</span></label>
                 <input type="text" name="last_name" id="last-name" required>
                 {% if form.last_name.errors %}
-                    <div class="field-error">{% for error in form.last_name.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                    <div class="field-error">{% for error in form.last_name.errors %}
+                        <span>{{ error }}</span>{% endfor %}</div>
                 {% endif %}
             </div>
 
@@ -48,7 +50,8 @@
                 <label for="phone">Phone <span class="required">*</span></label>
                 <input type="tel" name="phone" id="phone" required>
                 {% if form.phone.errors %}
-                    <div class="field-error">{% for error in form.phone.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                    <div class="field-error">{% for error in form.phone.errors %}<span>{{ error }}</span>{% endfor %}
+                    </div>
                 {% endif %}
             </div>
 
@@ -56,7 +59,8 @@
                 <label for="email">Email <span class="required">*</span></label>
                 <input type="email" name="email" id="email" required>
                 {% if form.email.errors %}
-                    <div class="field-error">{% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                    <div class="field-error">{% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+                    </div>
                 {% endif %}
             </div>
 
@@ -64,7 +68,8 @@
                 <label for="password">Password <span class="required">*</span></label>
                 <input type="password" name="password" id="password" required>
                 {% if form.password.errors %}
-                    <div class="field-error">{% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                    <div class="field-error">{% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
+                    </div>
                 {% endif %}
             </div>
 
@@ -72,7 +77,8 @@
                 <label for="confirm-password">Confirm Password <span class="required">*</span></label>
                 <input type="password" name="confirm_password" id="confirm-password" required>
                 {% if form.confirm_password.errors %}
-                    <div class="field-error">{% for error in form.confirm_password.errors %}<span>{{ error }}</span>{% endfor %}</div>
+                    <div class="field-error">{% for error in form.confirm_password.errors %}
+                        <span>{{ error }}</span>{% endfor %}</div>
                 {% endif %}
             </div>
 
@@ -92,7 +98,7 @@
                     <select name="city" id="city">
                         {% for city in cities %}
                             <option value="{{ city.id }}"
-                                {% if city.name == 'Tashkent' %}selected{% endif %}>
+                                    {% if city.name == 'Tashkent' %}selected{% endif %}>
                                 {{ city.name }}
                             </option>
                         {% endfor %}
@@ -111,10 +117,10 @@
                     <label>Languages <span class="required">*</span></label>
                     <div id="languages-list" class="multiselect-container">
                         {% for language in languages %}
-                        <div class="multiselect-option" data-value="{{ language.id }}">
-                            <input type="checkbox" name="language" value="{{ language.id }}">
-                            <span>{{ language.name }}</span>
-                        </div>
+                            <div class="multiselect-option" data-value="{{ language.id }}">
+                                <input type="checkbox" name="language" value="{{ language.id }}">
+                                <span>{{ language.name }}</span>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -122,11 +128,11 @@
                 <div class="form-field">
                     <label>Translation Type <span class="required">*</span></label>
                     <div id="translation-type-list" class="multiselect-container">
-                         {% for type in translation_types %}
-                        <div class="multiselect-option" data-value="{{ type.id }}">
-                            <input type="checkbox" name="translation_type" value="{{ type.id }}">
-                            <span>{{ type.name }}</span>
-                        </div>
+                        {% for type in translation_types %}
+                            <div class="multiselect-option" data-value="{{ type.id }}">
+                                <input type="checkbox" name="translation_type" value="{{ type.id }}">
+                                <span>{{ type.name }}</span>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -143,10 +149,14 @@
         <!-- Google Registration Button -->
         <button id="google-register" type="button" class="google-button">
             <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                <path fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
             <span id="google-button-text">Continue with Google</span>
         </button>
@@ -160,29 +170,29 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const registrationForm = document.getElementById('registration-form');
-    const interpreterFields = document.getElementById('interpreter-fields');
-    const clientSignupUrl = "{% url 'client_signup' %}";
-    const interpreterSignupUrl = "{% url 'interpreter_signup' %}";
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const registrationForm = document.getElementById('registration-form');
+        const interpreterFields = document.getElementById('interpreter-fields');
+        const clientSignupUrl = "{% url 'client_signup' %}";
+        const interpreterSignupUrl = "{% url 'interpreter_signup' %}";
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            const userType = this.dataset.type;
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                const userType = this.dataset.type;
 
-            if (userType === 'interpreter') {
-                registrationForm.action = interpreterSignupUrl;
-                interpreterFields.style.display = 'block';
-            } else {
-                registrationForm.action = clientSignupUrl;
-                interpreterFields.style.display = 'none';
-            }
+                if (userType === 'interpreter') {
+                    registrationForm.action = interpreterSignupUrl;
+                    interpreterFields.style.display = 'block';
+                } else {
+                    registrationForm.action = clientSignupUrl;
+                    interpreterFields.style.display = 'none';
+                }
+            });
         });
     });
-});
 </script>
 
 <script src="{% static 'js/auth.js' %}"></script>

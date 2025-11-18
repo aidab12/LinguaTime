@@ -1,4 +1,4 @@
-from django.db.models import CharField, ForeignKey, CASCADE
+from django.db.models import CASCADE, CharField, ForeignKey
 from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import UUIDBaseModel
