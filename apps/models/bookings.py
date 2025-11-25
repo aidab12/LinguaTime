@@ -1,7 +1,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models import (CASCADE, CharField, DateTimeField, DecimalField,
-                              ForeignKey, PositiveSmallIntegerField,
-                              TextChoices, TextField)
+from django.db.models import (CASCADE, BooleanField, CharField, DateTimeField,
+                              DecimalField, ForeignKey,
+                              PositiveSmallIntegerField, TextChoices,
+                              TextField)
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -15,6 +16,7 @@ class Booking(CreatedBaseModel):
         OFFERED = 'offered', _('Предложен')
         ACCEPTED = 'accepted', _('Принят')
         DECLINED = 'declined', _('Отклонен')
+        EXPIRED = 'expired', _('Истек')
         COMPLETED = 'completed', _('Завершен')
         CANCELED = 'canceled', _('Отменен')
 
@@ -26,6 +28,12 @@ class Booking(CreatedBaseModel):
     actual_hours = DecimalField(_('Фактические часы'), max_digits=5, decimal_places=2, null=True, blank=True)
     payout = DecimalField(_('Сумма оплаты'), max_digits=10, decimal_places=2, null=True, blank=True)
     rate = DecimalField(_('Ставка для переводчика'), max_digits=10, decimal_places=2)
+
+    # Order Workflow Fields
+    offer_expires_at = DateTimeField(_('Истечение офера'), null=True, blank=True,
+                                     help_text=_('Время истечения офера (3 часа от отправки)')
+                                     )
+    is_expired = BooleanField(_('Истек'), default=False, help_text=_('Истек ли срок принятия офера'))
 
     class Meta:
         verbose_name = _('Бронирование')

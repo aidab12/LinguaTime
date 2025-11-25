@@ -12,7 +12,7 @@ const defaultConfig = {
     font_size: 16
 };
 
-let config = {...defaultConfig};
+let config = { ...defaultConfig };
 let currentUserType = 'client';
 
 const clientToggle = document.getElementById('client-toggle');
@@ -74,7 +74,7 @@ function switchUserType(type) {
 if (clientToggle && interpreterToggle) {
     clientToggle.addEventListener('click', () => switchUserType('client'));
     interpreterToggle.addEventListener('click', () => switchUserType('interpreter'));
-    
+
     // Устанавливаем начальное состояние
     switchUserType('client');
 }
@@ -231,7 +231,7 @@ function showGoogleUserTypeModal() {
         continueBtn.style.opacity = '0.7';
 
         // Редирект с типом пользователя
-        window.location.href = `/auth/google-login?user_type=${selectedType}`;
+        window.location.href = `/auth/google-login/?user_type=${selectedType}`;
     });
 
     cancelBtn.addEventListener('click', () => {
@@ -327,7 +327,7 @@ if (window.elementSdk) {
     window.elementSdk.init({
         defaultConfig,
         onConfigChange: async (newConfig) => {
-            config = {...config, ...newConfig};
+            config = { ...config, ...newConfig };
             await onConfigChange(config);
         },
         mapToCapabilities: (cfg) => ({
@@ -336,35 +336,35 @@ if (window.elementSdk) {
                     get: () => cfg.background_color || defaultConfig.background_color,
                     set: (value) => {
                         cfg.background_color = value;
-                        window.elementSdk.setConfig({background_color: value});
+                        window.elementSdk.setConfig({ background_color: value });
                     }
                 },
                 {
                     get: () => cfg.surface_color || defaultConfig.surface_color,
                     set: (value) => {
                         cfg.surface_color = value;
-                        window.elementSdk.setConfig({surface_color: value});
+                        window.elementSdk.setConfig({ surface_color: value });
                     }
                 },
                 {
                     get: () => cfg.text_color || defaultConfig.text_color,
                     set: (value) => {
                         cfg.text_color = value;
-                        window.elementSdk.setConfig({text_color: value});
+                        window.elementSdk.setConfig({ text_color: value });
                     }
                 },
                 {
                     get: () => cfg.primary_action_color || defaultConfig.primary_action_color,
                     set: (value) => {
                         cfg.primary_action_color = value;
-                        window.elementSdk.setConfig({primary_action_color: value});
+                        window.elementSdk.setConfig({ primary_action_color: value });
                     }
                 },
                 {
                     get: () => cfg.secondary_action_color || defaultConfig.secondary_action_color,
                     set: (value) => {
                         cfg.secondary_action_color = value;
-                        window.elementSdk.setConfig({secondary_action_color: value});
+                        window.elementSdk.setConfig({ secondary_action_color: value });
                     }
                 }
             ],
@@ -373,14 +373,14 @@ if (window.elementSdk) {
                 get: () => cfg.font_family || defaultConfig.font_family,
                 set: (value) => {
                     cfg.font_family = value;
-                    window.elementSdk.setConfig({font_family: value});
+                    window.elementSdk.setConfig({ font_family: value });
                 }
             },
             fontSizeable: {
                 get: () => cfg.font_size || defaultConfig.font_size,
                 set: (value) => {
                     cfg.font_size = value;
-                    window.elementSdk.setConfig({font_size: value});
+                    window.elementSdk.setConfig({ font_size: value });
                 }
             }
         }),

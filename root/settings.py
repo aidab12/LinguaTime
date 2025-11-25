@@ -168,16 +168,13 @@ CELERY_RESULT_BACKEND = os.getenv('REDIS_LOCATION')
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
-GOOGLE_REDIRECT_URI = "http://localhost:8000/auth/oauth2/callback"
+GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI')
 
-# Google Calendar API Configuration (отдельный flow)
-GOOGLE_CALENDAR_REDIRECT_URI = os.getenv(
-    'GOOGLE_CALENDAR_REDIRECT_URI',
-    'http://localhost:8000/auth/google-calendar/callback'
-)
+GOOGLE_CALENDAR_REDIRECT_URI = os.getenv('GOOGLE_CALENDAR_REDIRECT_URI')
 
 GOOGLE_OAUTH_SCOPES = {
     'basic': [
+        'openid',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile',
     ],
@@ -186,6 +183,13 @@ GOOGLE_OAUTH_SCOPES = {
         'https://www.googleapis.com/auth/calendar.events',
     ]
 }
+
+# Google Calendar Webhook Configuration
+WEBHOOK_URL_BASE = os.getenv('WEBHOOK_URL_BASE')
+
+# Telegram Bot Configuration
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_WEBHOOK_URL = os.getenv('TELEGRAM_WEBHOOK_URL')  # https://your-domain.com/webhook/telegram/
 
 # Путь для хранения токенов календаря
 GOOGLE_CALENDAR_TOKEN_DIR = BASE_DIR / 'tokens'

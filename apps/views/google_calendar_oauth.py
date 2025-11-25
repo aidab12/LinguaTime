@@ -10,8 +10,8 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
 
-from apps.models import (  # Import GoogleCalendarCredentials
-    GoogleCalendarCredentials, Interpreter)
+from apps.models import \
+    GoogleCalendarCredentials  # Import GoogleCalendarCredentials
 from apps.services.google_calendar import GoogleCalendarService
 
 logger = logging.getLogger(__name__)
@@ -29,21 +29,22 @@ class GoogleCalendarAuthorizeView(LoginRequiredMixin, View):
         """Инициирует Calendar OAuth flow"""
 
         # Проверяем, что пользователь - переводчик
-        if not isinstance(request.user, Interpreter):
+        if not request.user.is_interpreter:
             messages.error(request, "Only interpreters can connect Google Calendar")
             return redirect('interpreter_profile')
 
         # Проверяем, не подключён ли уже календарь
-        if request.user.google_calendar_connected:
+        interpreter = request.user.interpreter
+        if interpreter.google_calendar_connected:
             # Use the service to check if credentials are still valid
-            calendar_service = GoogleCalendarService(str(request.user.id))
+            calendar_service = GoogleCalendarService(interpreter)
             if calendar_service.is_authorized():
                 messages.info(request, "Calendar is already connected and authorized.")
                 return redirect('interpreter_profile')
             else:
                 # If not authorized, reset connection status to allow re-authorization
-                request.user.google_calendar_connected = False
-                request.user.save(update_fields=['google_calendar_connected'])
+                interpreter.google_calendar_connected = False
+                interpreter.save(update_fields=['google_calendar_connected'])
                 messages.warning(request, "Your Google Calendar connection needs to be re-authorized.")
 
         # Генерируем state для CSRF защиты
@@ -90,7 +91,7 @@ class GoogleCalendarCallbackView(LoginRequiredMixin, View):
         """Основной обработчик callback"""
 
         # Проверяем, что пользователь - переводчик
-        if not isinstance(request.user, Interpreter):
+        if not request.user.is_interpreter:
             messages.error(request, "Not authorized")
             return redirect('interpreter_profile')
 
@@ -113,15 +114,17 @@ class GoogleCalendarCallbackView(LoginRequiredMixin, View):
             # Обмениваем code на tokens
             tokens = self._exchange_code_for_tokens(code)
 
-            # Сохраняем credentials
+            # Сохраняем credentials (передаем User объект, а не Interpreter proxy)
             self._save_credentials(request.user, tokens)
 
             # Обновляем статус в БД
-            request.user.google_calendar_connected = True
-            request.user.save(update_fields=['google_calendar_connected'])
+            # Обновляем статус в БД
+            interpreter = request.user.interpreter
+            interpreter.google_calendar_connected = True
+            interpreter.save(update_fields=['google_calendar_connected'])
 
             # Пробуем синхронизировать календарь
-            self._initial_sync(request.user)
+            self._initial_sync(interpreter)
 
             messages.success(
                 request,
@@ -222,7 +225,7 @@ class GoogleCalendarDisconnectView(LoginRequiredMixin, View):
     def post(self, request):
         """Обрабатывает отключение календаря"""
 
-        if not isinstance(request.user, Interpreter):
+        if not request.user.is_interpreter:
             return JsonResponse({'error': 'Not authorized'}, status=403)
 
         try:
@@ -230,8 +233,10 @@ class GoogleCalendarDisconnectView(LoginRequiredMixin, View):
             GoogleCalendarCredentials.objects.filter(user=request.user).delete()
 
             # Update status in DB
-            request.user.google_calendar_connected = False
-            request.user.save(update_fields=['google_calendar_connected'])
+            # Update status in DB
+            interpreter = request.user.interpreter
+            interpreter.google_calendar_connected = False
+            interpreter.save(update_fields=['google_calendar_connected'])
 
             messages.success(request, "Google Calendar disconnected successfully")
 
@@ -253,10 +258,10 @@ class CalendarStatusAPIView(LoginRequiredMixin, View):
     def get(self, request):
         """Возвращает статус подключения календаря"""
 
-        if not isinstance(request.user, Interpreter):
+        if not request.user.is_interpreter:
             return JsonResponse({'connected': False})
 
-        calendar_service = GoogleCalendarService(str(request.user.id))
+        calendar_service = GoogleCalendarService(request.user.interpreter)
         is_authorized = calendar_service.is_authorized()
 
         return JsonResponse({

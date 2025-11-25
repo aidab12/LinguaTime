@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import (CASCADE, PROTECT, CharField, DateTimeField,
-                              ForeignKey, ManyToManyField,
+                              ForeignKey, JSONField, ManyToManyField,
                               PositiveSmallIntegerField, TextChoices,
                               TextField)
 from django.utils.translation import gettext_lazy as _
@@ -28,10 +28,12 @@ class Order(CreatedBaseModel):
 
     class OrderStatus(TextChoices):
         NEW = 'new', _('Новый')
-        SEARCHING = 'searching', _('searching')
-        ASSIGNED = 'assigned', _('assigned')
-        COMPLETED = 'completed', _('completed')
-        CANCELLED = 'cancelled', _('cancelled')
+        SEARCHING = 'searching', _('Поиск переводчиков')
+        PARTIALLY_ASSIGNED = 'partially_assigned', _('Частично назначен')
+        ASSIGNED = 'assigned', _('Назначен')
+        IN_PROGRESS = 'in_progress', _('В процессе')
+        COMPLETED = 'completed', _('Завершен')
+        CANCELLED = 'cancelled', _('Отменен')
 
     # ===== ОСНОВНЫЕ ПОЛЯ =====
 
@@ -57,6 +59,14 @@ class Order(CreatedBaseModel):
     formality_level = CharField(max_length=20, choices=FormalityLevel.choices, default=FormalityLevel.BUSINESS)
     status = CharField(_('Статус заказа'), max_length=20, choices=OrderStatus.choices, default=OrderStatus.NEW)
     notes = TextField(blank=True)
+
+    # Order Workflow Fields
+    selected_slots = JSONField(
+        _('Выбранные слоты'),
+        null=True,
+        blank=True,
+        help_text=_('Список выбранных временных слотов в формате ["2024-01-15-morning", ...]')
+    )
 
     class Meta:
         verbose_name = _('Заказ')

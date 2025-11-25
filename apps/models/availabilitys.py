@@ -24,7 +24,7 @@ class Availability(CreatedBaseModel):
     last_synced_at = DateTimeField(_('Последняя синхронизация'), blank=True, null=True)
     is_google_calendar_event = BooleanField(_('Событие из Google Calendar'), default=False)
 
-    translator = ForeignKey('apps.Interpreter', CASCADE, related_name='availabilities', verbose_name=_('Переводчик'))
+    translator = ForeignKey('apps.Interpreter', CASCADE, related_name='availabilities')
 
     class Meta:
         verbose_name = _('Доступность переводчика')

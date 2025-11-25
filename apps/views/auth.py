@@ -1,7 +1,8 @@
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, FormView
 
 from apps.forms import (LoginForm, RegisterClientModelForm,
@@ -73,3 +74,24 @@ class RegisterInterpreterCreateView(LoginNotRequiredMixin, CreateView):
     def form_invalid(self, form):
         messages.error(self.request, "Please correct the errors below.")
         return super().form_invalid(form)
+
+
+class LogoutView(View):
+    """Выход из системы с очисткой сессии"""
+
+    def get(self, request):
+        # Очистка OAuth состояний из сессии
+        request.session.pop('oauth_state', None)
+        request.session.pop('oauth_user_type', None)
+
+        # Очистка Google Calendar состояний из сессии
+        request.session.pop('google_calendar_state', None)
+        request.session.pop('google_calendar_user_id', None)
+
+        # Выход пользователя
+        logout(request)
+
+        # Сообщение об успешном выходе
+        messages.success(request, "You have been successfully logged out.")
+
+        return redirect('login_page')
