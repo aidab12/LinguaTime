@@ -1,13 +1,9 @@
-"""
-Celery tasks для Google Calendar интеграции
-"""
-import logging
 from datetime import timedelta
 
 from celery import shared_task
 from django.utils import timezone
 
-logger = logging.getLogger(__name__)
+from apps.utils import logger
 
 
 @shared_task

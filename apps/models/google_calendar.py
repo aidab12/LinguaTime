@@ -1,5 +1,5 @@
-from django.db.models import (CASCADE, BooleanField, CharField, DateTimeField,
-                              ForeignKey, TextField)
+from django.db.models import BooleanField, DateTimeField, ForeignKey, CASCADE, OneToOneField
+from django.db.models.fields import CharField, TextField
 from django.utils.translation import gettext_lazy as _
 
 from apps.models.base import CreatedBaseModel
@@ -25,3 +25,16 @@ class GoogleCalendarWebhookChannel(CreatedBaseModel):
 
     def __str__(self):
         return f"Канал {self.channel_id[:8]} для {self.interpreter}"
+
+
+class GoogleCalendarCredentials(CreatedBaseModel):
+    user = OneToOneField('apps.Interpreter', CASCADE, related_name='google_calendar_credentials')
+    token = CharField(max_length=255)
+    refresh_token = CharField(max_length=255, null=True, blank=True)
+    token_uri = CharField(max_length=255)
+    client_id = CharField(max_length=255)
+    client_secret = CharField(max_length=255)
+    scopes = TextField()
+
+    def __str__(self):
+        return f"Credentials for {self.user.email}"

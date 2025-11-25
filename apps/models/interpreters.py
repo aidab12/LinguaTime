@@ -1,9 +1,10 @@
 from django.core.exceptions import ValidationError
-from django.db.models import (CASCADE, BooleanField, CharField, DateTimeField,
-                              ForeignKey, TextChoices, TextField)
+from django.db.models import (BooleanField, DateTimeField,
+                              TextChoices, TextField)
+from django.db.models import CASCADE, CharField, ForeignKey
 from django.utils.translation import gettext_lazy as _
 
-from apps.models.base import CreatedBaseModel
+from apps.models.base import UUIDBaseModel, CreatedBaseModel
 
 
 class Availability(CreatedBaseModel):
@@ -46,3 +47,31 @@ class Availability(CreatedBaseModel):
         """Переопределение save для вызова clean()"""
         self.clean()
         super().save(*args, **kwargs)
+
+
+class Language(UUIDBaseModel):
+    """Модель для языков"""
+    name = CharField(max_length=100)
+
+    class Meta:
+        verbose_name = _("Language")
+        verbose_name_plural = _("Languages")
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class LanguagePair(UUIDBaseModel):
+    source = ForeignKey('apps.Language', CASCADE, related_name='source_pairs')
+    target = ForeignKey('apps.Language', CASCADE, related_name='target_pairs')
+
+    class Meta:
+        unique_together = ('source', 'target')
+
+    def __str__(self):
+        return f'{self.source} → {self.target}'
+
+
+class TranslationType(UUIDBaseModel):
+    name = CharField(max_length=100)

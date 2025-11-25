@@ -10,8 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views import View
 
-from apps.models import \
-    GoogleCalendarCredentials  # Import GoogleCalendarCredentials
+from apps.models import GoogleCalendarCredentials, User  # Import GoogleCalendarCredentials
 from apps.services.google_calendar import GoogleCalendarService
 
 logger = logging.getLogger(__name__)
@@ -195,7 +194,7 @@ class GoogleCalendarCallbackView(LoginRequiredMixin, View):
         """Сохраняет credentials через GoogleCalendarService"""
         # Use GoogleCalendarCredentials model directly
         GoogleCalendarCredentials.objects.update_or_create(
-            user=user,
+            user=user.interpreter,
             defaults={
                 'token': tokens['access_token'],
                 'refresh_token': tokens.get('refresh_token'),
@@ -224,17 +223,16 @@ class GoogleCalendarDisconnectView(LoginRequiredMixin, View):
 
     def post(self, request):
         """Обрабатывает отключение календаря"""
-
-        if not request.user.is_interpreter:
+        user: User = request.user
+        if not user.is_interpreter:
             return JsonResponse({'error': 'Not authorized'}, status=403)
 
         try:
             # Delete credentials from our database
-            GoogleCalendarCredentials.objects.filter(user=request.user).delete()
+            GoogleCalendarCredentials.objects.filter(user=user.interpreter).delete()
 
             # Update status in DB
-            # Update status in DB
-            interpreter = request.user.interpreter
+            interpreter = user.interpreter
             interpreter.google_calendar_connected = False
             interpreter.save(update_fields=['google_calendar_connected'])
 
@@ -243,7 +241,7 @@ class GoogleCalendarDisconnectView(LoginRequiredMixin, View):
             return JsonResponse({'success': True})
 
         except Exception as e:
-            logger.error(f"Error disconnecting calendar for {request.user.email}: {e}")
+            logger.error(f"Error disconnecting calendar for {user.email}: {e}")
             return JsonResponse({
                 'error': 'Failed to disconnect calendar'
             }, status=500)

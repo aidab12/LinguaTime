@@ -3,17 +3,12 @@ from django.urls import path
 from apps.views import (BillingView, DashboardView, LoginFormView, LogoutView,
                         NewOrderView, OrdersView, ProfileView,
                         RegisterCreateView, RegisterInterpreterCreateView,
-                        SettingsView)
-from apps.views.google_calendar_oauth import (CalendarStatusAPIView,
-                                              GoogleCalendarAuthorizeView,
-                                              GoogleCalendarCallbackView,
-                                              GoogleCalendarDisconnectView)
-from apps.views.google_calendar_webhook import GoogleCalendarWebhookView
-from apps.views.oauth2 import GoogleCallbackView, GoogleLoginView
-from apps.views.order_workflow import OrderCreateView, OrderSendOffersView
-from apps.views.profile import InterpreterProfileView
-from apps.views.role_switch import RoleSwitchView
-from apps.views.telegram_webhook import TelegramWebhookView
+                        SettingsView, TelegramWebhookView, RoleSwitchView, GoogleCallbackView,
+                        GoogleLoginView, InterpreterProfileView, GoogleCalendarWebhookView, OrderCreateView,
+                        OrderSendOffersView, CalendarStatusAPIView,
+                        GoogleCalendarAuthorizeView,
+                        GoogleCalendarCallbackView,
+                        GoogleCalendarDisconnectView)
 
 urlpatterns = [
     path('', LoginFormView.as_view(), name='login_page'),

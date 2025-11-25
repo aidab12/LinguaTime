@@ -1,8 +1,4 @@
-"""
-Order Workflow API Views
-"""
 import json
-import logging
 
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -10,8 +6,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from apps.models import Order
-
-logger = logging.getLogger(__name__)
+from apps.utils import logger
 
 
 @method_decorator(csrf_exempt, name='dispatch')

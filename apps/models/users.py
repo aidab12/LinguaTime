@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractUser, PermissionsMixin, UUIDBaseModel):
+class User(AbstractUser, UUIDBaseModel):
     """Основная модель пользователя"""
 
     class UserType(TextChoices):

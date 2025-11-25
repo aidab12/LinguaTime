@@ -75,46 +75,54 @@
             <!-- Google Calendar Integration Section -->
             <div class="mt-8 pt-8 border-t border-gray-700">
                 <h3 class="text-2xl font-semibold section-title mb-4">Google Calendar Integration</h3>
-                
-                {% if request.user.is_authenticated %}
-                    {% if not request.user.google_calendar_connected %}
+
+                {% if user.is_authenticated %}
+                    {% if not user.google_calendar_connected %}
                         <!-- Not Connected State -->
                         <div class="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20">
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
                                     <div class="flex items-center mb-3">
-                                        <svg class="w-8 h-8 text-blue-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        <svg class="w-8 h-8 text-blue-400 mr-3" fill="none" viewBox="0 0 24 24"
+                                             stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
                                         <h4 class="text-xl font-semibold text-white">Синхронизация календаря</h4>
                                     </div>
                                     <p class="text-gray-300 mb-4">
-                                        Подключите Google Calendar для автоматической синхронизации вашего расписания. 
+                                        Подключите Google Calendar для автоматической синхронизации вашего расписания.
                                         Это поможет клиентам видеть вашу доступность и избежать конфликтов в расписании.
                                     </p>
                                     <ul class="text-gray-400 text-sm space-y-2 mb-4">
                                         <li class="flex items-center">
-                                            <svg class="w-4 h-4 text-green-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            <svg class="w-4 h-4 text-green-400 mr-2" fill="none" viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M5 13l4 4L19 7"/>
                                             </svg>
                                             Автоматическая синхронизация занятых слотов
                                         </li>
                                         <li class="flex items-center">
-                                            <svg class="w-4 h-4 text-green-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            <svg class="w-4 h-4 text-green-400 mr-2" fill="none" viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M5 13l4 4L19 7"/>
                                             </svg>
                                             Предотвращение двойного бронирования
                                         </li>
                                         <li class="flex items-center">
-                                            <svg class="w-4 h-4 text-green-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            <svg class="w-4 h-4 text-green-400 mr-2" fill="none" viewBox="0 0 24 24"
+                                                 stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M5 13l4 4L19 7"/>
                                             </svg>
                                             Push-уведомления об изменениях
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                            <a href="{% url 'google_calendar_authorize' %}" 
+                            <a href="{% url 'google_calendar_authorize' %}"
                                class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all transform hover:scale-105 shadow-lg">
                                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
@@ -128,37 +136,44 @@
                             <div class="flex items-start justify-between mb-4">
                                 <div class="flex-1">
                                     <div class="flex items-center mb-3">
-                                        <svg class="w-8 h-8 text-green-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <svg class="w-8 h-8 text-green-400 mr-3" fill="none" viewBox="0 0 24 24"
+                                             stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                         <h4 class="text-xl font-semibold text-green-400">Google Calendar подключен</h4>
                                     </div>
                                     <p class="text-gray-300 mb-2">
-                                        Ваш календарь успешно синхронизирован. Все занятые слоты автоматически обновляются.
+                                        Ваш календарь успешно синхронизирован. Все занятые слоты автоматически
+                                        обновляются.
                                     </p>
-                                    {% if request.user.last_calendar_sync %}
+                                    {% if user.last_calendar_sync %}
                                         <p class="text-gray-400 text-sm">
-                                            Последняя синхронизация: <span class="text-green-400 font-medium">{{ request.user.last_calendar_sync|date:"d.m.Y H:i" }}</span>
+                                            Последняя синхронизация: <span
+                                                class="text-green-400 font-medium">{{ user.last_calendar_sync|date:"d.m.Y H:i" }}</span>
                                         </p>
                                     {% endif %}
                                 </div>
                             </div>
                             <div class="flex space-x-4">
-                                <button type="button" 
-                                        onclick="syncCalendar()" 
+                                <button type="button"
+                                        onclick="syncCalendar()"
                                         class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg">
                                     <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                     </svg>
                                     Синхронизировать сейчас
                                 </button>
-                                <form action="{% url 'google_calendar_disconnect' %}" method="post" class="inline-block">
+                                <form action="{% url 'google_calendar_disconnect' %}" method="post"
+                                      class="inline-block">
                                     {% csrf_token %}
-                                    <button type="submit" 
+                                    <button type="submit"
                                             onclick="return confirm('Вы уверены что хотите отключить Google Calendar?')"
                                             class="inline-flex items-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-colors shadow-lg">
                                         <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                         Отключить календарь
                                     </button>
@@ -169,24 +184,24 @@
                 {% endif %}
             </div>
         </div>
+    </div>
+{% endblock %}
 
-        <script>
-                function syncCalendar() {
-                    // You might want to add a loading spinner or confirmation here
-                    fetch("{% url 'google_calendar_status' %}", {method: 'GET'})
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.connected) {
-                                alert('Calendar sync initiated. Please refresh the page in a moment.');
-                                window.location.reload(); // Simple reload for demonstration
-                            } else {
-                                alert('Google Calendar is not connected.');
-                            }
-                        })
-                        .catch(error => console.error('Error checking calendar status:', error));
-                });
+{% block extra_js %}
+    <script>
+        function syncCalendar() {
+            // You might want to add a loading spinner or confirmation here
+            fetch("{% url 'google_calendar_status' %}", {method: 'GET'})
+                .then(response => response.json())
+                .then(data => {
+                    if (data.connected) {
+                        alert('Calendar sync initiated. Please refresh the page in a moment.');
+                        window.location.reload(); // Simple reload for demonstration
+                    } else {
+                        alert('Google Calendar is not connected.');
+                    }
+                })
+                .catch(error => console.error('Error checking calendar status:', error));
         }
     </script>
-        </div>
-    </div>
 {% endblock %}

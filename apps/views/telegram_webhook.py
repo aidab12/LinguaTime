@@ -1,9 +1,5 @@
-"""
-Telegram Webhook View для обработки callback от Aiogram бота
-"""
 import asyncio
 import json
-import logging
 
 from aiogram.types import Update
 from django.http import HttpResponse
@@ -11,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
-logger = logging.getLogger(__name__)
+from apps.utils import logger
 
 
 @method_decorator(csrf_exempt, name='dispatch')

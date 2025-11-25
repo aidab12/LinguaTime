@@ -1,4 +1,3 @@
-import logging
 import secrets
 import urllib.parse
 
@@ -10,8 +9,6 @@ from django.shortcuts import redirect
 from django.views import View
 
 from apps.models import Client, Interpreter
-
-logger = logging.getLogger(__name__)
 
 
 class GoogleLoginView(View):
@@ -266,6 +263,7 @@ class GoogleCallbackView(View):
         # Создаём или получаем пользователя
         user, created = UserModel.objects.get_or_create(
             email=email,
+            user_type=user_type,
             defaults={
                 "first_name": first_name,
                 "last_name": last_name,
@@ -288,7 +286,7 @@ class GoogleCallbackView(View):
             user: Экземпляр пользователя
             created (bool): Флаг создания нового пользователя
         """
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        login(request, user)
 
         if created:
             messages.success(request, "Account created successfully!")

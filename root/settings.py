@@ -111,41 +111,18 @@ USE_L10N = False
 USE_TZ = True
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'apps/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Папка, где физически будут лежать файлы
-MEDIA_URL = "media/"  # Через какой URL их можно будет открыть
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
-
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
-
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-}
-
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": os.getenv('REDIS_LOCATION'),
     }
-}
-
-SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ('Bearer',),
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=90),
 }
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -158,13 +135,13 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 # Отключить проверку SSL (только для разработки!)
 EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
 
 CELERY_BROKER_URL = os.getenv('REDIS_LOCATION')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_LOCATION')
-
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
@@ -433,5 +410,3 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
-
-

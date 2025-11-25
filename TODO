@@ -22,9 +22,11 @@ https://www.proz.com/
 
 
 TASK
-1. unique larni olib tashash +
-2. admin va views ni bo'laklash +
-3. login page larni togrilash +
-4. logout ni qilish +
-5. page larni bir biriga otadigan qilish (dashboard dagi)
-6. email only model Client, Interpreter unique=True ?
+1. login yoki register qilgan
+current_role ni togrilash
+
+
+email - client da turibdi
+interpreter registerda agar bu email bor bolsa
+userni both qilib belgilab qoydim
+

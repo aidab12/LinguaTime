@@ -25,6 +25,9 @@ class LoginFormView(LoginNotRequiredMixin, FormView):
             return redirect('interpreter_profile')
         return redirect('client_dashboard')
 
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
 
 class RegisterCreateView(LoginNotRequiredMixin, CreateView):
     """Регистрация обычных клиентов"""

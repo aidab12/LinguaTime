@@ -1,14 +1,9 @@
-"""
-Aiogram Bot Setup и Handlers
-"""
-import logging
-
 from aiogram import Bot, Dispatcher, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 from django.conf import settings
 
-logger = logging.getLogger(__name__)
+from apps.utils import logger
 
 # Создание бота и диспетчера
 bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
@@ -31,7 +26,7 @@ async def cmd_start(message: Message):
 
 # Обработчик callback от inline кнопок
 @router.callback_query(lambda c: c.data and (
-    c.data.startswith('accept_order:') or c.data.startswith('decline_order:')
+        c.data.startswith('accept_order:') or c.data.startswith('decline_order:')
 ))
 async def process_order_callback(callback: CallbackQuery):
     """Обработка принятия/отклонения заказа"""
